@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 const TweetSomething: FC = () => {
   return (
-    <div className="w-2/3 px-5 py-3 bg-white rounded-lg">
+    <div className="px-5 pt-4 pb-3 bg-white rounded-lg space-y-2">
       <h1 className="font-bold text-xs">Tweet something</h1>
       <hr className="pb-2 mt-2" />
       <div className="flex items-start space-x-3">

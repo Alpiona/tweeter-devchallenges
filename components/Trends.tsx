@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 const Trends: FC = () => {
   return (
-    <div className="h-1/2 w-1/3 px-5 py-3 bg-white rounded-lg">
+    <div className="px-5 py-5 bg-white rounded-lg">
       <h1 className="font-bold text-xs">Trends for you</h1>
       <hr className="pb-2 mt-2" />
 
