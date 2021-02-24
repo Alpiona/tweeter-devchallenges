@@ -76,7 +76,7 @@ const Tweet: FC<TweetProps> = ({
             alt=""
             className="h-9 w-9 object-cover rounded-lg"
           />
-          <div className="flex items-center justify-between p-2 h-9 w-full border rounded-lg bg-gray-100 text-gray-400 ">
+          <div className="flex flex-grow items-center justify-between p-2 h-9 w-full border rounded-lg bg-gray-100 text-gray-400 ">
             <div className="text-sm">Tweet your reply</div>
             <span className="material-icons-outlined">insert_photo</span>
           </div>

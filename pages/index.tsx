@@ -25,8 +25,8 @@ const Home: NextPage = () => {
         />
       </Head>
       <Layout>
-        <div className="flex items-start space-x-6 pl-44 pr-6 py-6 bg-gray-100 ">
-          <div className="w-2/3 space-y-6">
+        <div className="flex items-start justify-center space-x-6 pl-44 pr-6 py-6 bg-gray-100 ">
+          <div className="w-1/2 space-y-6">
             <TweetSomething userImg="/profile.jpg" />
             <Tweet
               retweetedBy="Daniel Something"
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
               retweetedBy=""
               userImg="/profile6.jpg"
               userName="Waqar Bloom"
-              date="15 August at 23:44"
+              date="15 August at 23:33"
               content="“The gladdest moment in human life, methinks, is a departure into unknown lands.” – Sir Richard Burton"
               img="/background4.jpg"
               commentsQty="449"
@@ -57,7 +57,7 @@ const Home: NextPage = () => {
               saved={false}
             />
           </div>
-          <div className="w-1/3 space-y-6">
+          <div className="w-1/5 space-y-6">
             <TrendsList />
             <div className="px-5 py-4 bg-white rounded-xl space-y-2">
               <div className="space-y-5">

@@ -19,14 +19,14 @@ const Comment: FC<CommentProps> = ({
   likesQty,
 }) => {
   return (
-    <div className="flex items-start space-x-2 w-full">
+    <div className="flex items-start space-x-2 flex-grow">
       <img
         src={userImg}
         alt=""
         className="flex-shrink-0 h-9 w-9 object-cover rounded-lg"
       />
-      <div>
-        <div className="bg-gray-100 rounded-xl p-2 overflow-y-hidden">
+      <div className="flex-grow">
+        <div className="bg-gray-100 rounded-xl p-2">
           <div className="flex space-x-3 font-medium items-baseline">
             <h1>{userName}</h1>
             <h1 className="text-xs text-gray-400">{date}</h1>
