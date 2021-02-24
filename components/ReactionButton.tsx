@@ -3,10 +3,16 @@ import { FC } from 'react';
 interface ReactionButtonProps {
   action: 'comment' | 'retweet' | 'like' | 'save';
   used?: boolean;
+  scale?: string;
 }
 
-const ReactionButton: FC<ReactionButtonProps> = ({ action, used = false }) => {
-  const className = 'flex items-center justify-center space-x-2 flex-1';
+const ReactionButton: FC<ReactionButtonProps> = ({
+  action,
+  used = false,
+  scale,
+}) => {
+  const className = 'flex items-center font-medium justify-center space-x-2';
+  const transformScale = scale ? `transform scale-${scale}` : '';
   let color = 'text-gray-600';
   let icon = '';
   let word = '';
@@ -52,7 +58,7 @@ const ReactionButton: FC<ReactionButtonProps> = ({ action, used = false }) => {
   }
 
   return (
-    <button type="button" className={`${className} ${color}`}>
+    <button type="button" className={`${className} ${transformScale} ${color}`}>
       <span className="material-icons-outlined">{icon}</span>
       <h1>{word}</h1>
     </button>
