@@ -7,6 +7,9 @@ module.exports = {
         1.5: '1.5',
       },
     },
+    fontFamily: {
+      noto: 'Noto Sans',
+    },
   },
   variants: {
     extend: {},

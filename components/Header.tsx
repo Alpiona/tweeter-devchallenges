@@ -7,7 +7,7 @@ const Header: NextComponentType = () => {
       <Link href="/">
         <img src="/tweeter.svg" alt="" className="object-left h-7" />
       </Link>
-      <div className="flex items-center justify-around w-96 font-bold text-gray-500">
+      <div className="flex items-center justify-around w-96 font-semibold text-base text-gray-500">
         <Link href="/">Home</Link>
         <Link href="/explore">Explore</Link>
         <Link href="/bookmarks">Bookmarks</Link>
@@ -18,7 +18,7 @@ const Header: NextComponentType = () => {
           alt=""
           className="h-8 w-8 object-cover rounded-lg"
         />
-        <h1 className="pl-3">André Piona</h1>
+        <h1 className="pl-3 font-bold font-noto text-sm">André Piona</h1>
       </div>
     </nav>
   );
