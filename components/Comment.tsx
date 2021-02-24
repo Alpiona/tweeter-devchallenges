@@ -20,11 +20,15 @@ const Comment: FC<CommentProps> = ({
 }) => {
   return (
     <div className="flex items-start space-x-2 w-full">
-      <img src={userImg} alt="" className="h-9 w-9 object-cover rounded-lg" />
+      <img
+        src={userImg}
+        alt=""
+        className="flex-shrink-0 h-9 w-9 object-cover rounded-lg"
+      />
       <div>
-        <div className="bg-gray-100 rounded-xl p-2 h-full">
+        <div className="bg-gray-100 rounded-xl p-2 overflow-y-hidden">
           <div className="flex space-x-3 font-medium items-baseline">
-            <h1 className="">{userName}</h1>
+            <h1>{userName}</h1>
             <h1 className="text-xs text-gray-400">{date}</h1>
           </div>
           <h1 className="font-noto text-gray-700">{content}</h1>

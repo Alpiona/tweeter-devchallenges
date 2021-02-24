@@ -34,13 +34,13 @@ const Tweet: FC<TweetProps> = ({
   return (
     <div>
       {retweetedBy && (
-        <div className="flex py-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
+        <div className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
           <span className="material-icons text-md">loop</span>
           <h1 className="font-noto">{`${retweetedBy} retweeted`}</h1>
         </div>
       )}
 
-      <div className="px-5 py-5 h-auto bg-white rounded-xl space-y-3">
+      <div className="px-5 py-5 bg-white rounded-xl space-y-3">
         <div className="flex items-center space-x-3">
           <img
             src={userImg}
@@ -63,7 +63,7 @@ const Tweet: FC<TweetProps> = ({
           </div>
           <hr />
         </div>
-        <div className="flex text-sm justify-center space-x-16">
+        <div className="flex text-sm justify-evenly">
           <ReactionButton action="comment" />
           <ReactionButton action="like" used={liked} />
           <ReactionButton action="retweet" used={retweeted} />
@@ -82,14 +82,22 @@ const Tweet: FC<TweetProps> = ({
           </div>
         </div>
         <hr />
-        <div className="pt-3">
+        <div className="pt-3 space-y-4">
           <Comment
-            userImg="/profile.jpg"
+            userImg="/profile6.jpg"
             userName="Waqar Bloom"
             date="24 August at 20:43"
             content="I’ve seen awe-inspiring things that I thought I’d never be able to explain to another person."
             liked
             likesQty="12k"
+          />
+          <Comment
+            userImg="/profile3.jpg"
+            userName="Bianca Sosa"
+            date="23 August at 14:54"
+            content="I’ve felt this pull many times, like while road tripping through Morocco. Seeking out the vastness of the desert, and looking inward at the same time. More message just to test the 'read more'."
+            liked={false}
+            likesQty="8k"
           />
         </div>
       </div>
