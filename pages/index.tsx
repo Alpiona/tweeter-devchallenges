@@ -1,7 +1,8 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Layout from '../components/Layout';
-import Trends from '../components/Trends';
+import ReactionButton from '../components/ReactionButton';
+import TrendsList from '../components/TrendsList';
 import TweetSomething from '../components/TweetSomething';
 
 const Home: NextPage = () => {
@@ -59,38 +60,10 @@ const Home: NextPage = () => {
                   <hr />
                 </div>
                 <div className="flex text-sm">
-                  <button
-                    type="button"
-                    className="flex items-center justify-center space-x-2 flex-1 text-gray-600"
-                  >
-                    <span className="material-icons-outlined">comment</span>
-                    <h1>Comment</h1>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center space-x-2 flex-1 text-green-500"
-                  >
-                    <span className="material-icons-outlined">loop</span>
-                    <h1>Retweeted</h1>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center space-x-2 flex-1 text-red-500"
-                  >
-                    <span className="material-icons-outlined">
-                      favorite_border
-                    </span>
-                    <h1>Liked</h1>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center space-x-2 flex-1 text-blue-500"
-                  >
-                    <span className="material-icons-outlined">
-                      bookmark_border
-                    </span>
-                    <h1>Saved</h1>
-                  </button>
+                  <ReactionButton action="comment" />
+                  <ReactionButton action="like" used />
+                  <ReactionButton action="retweet" used />
+                  <ReactionButton action="save" used />
                 </div>
                 <hr />
                 <div className="flex items-center space-x-2 h-9">
@@ -110,7 +83,7 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="w-1/3">
-            <Trends />
+            <TrendsList />
           </div>
         </div>
       </Layout>

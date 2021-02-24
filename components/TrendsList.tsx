@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-const Trends: FC = () => {
+const TrendsList: FC = () => {
   return (
     <div className="px-5 py-4 bg-white rounded-lg">
       <h1 className="font-semibold text-xs">Trends for you</h1>
@@ -41,4 +41,4 @@ const Trends: FC = () => {
   );
 };
 
-export default Trends;
+export default TrendsList;
