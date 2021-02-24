@@ -11,27 +11,18 @@ const Home: NextPage = () => {
       <Head>
         <title>{title}</title>
         <link rel="icon" href="/tweeter-small.svg" />
+        <link
+          href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+          rel="stylesheet"
+        />
       </Head>
       <Layout>
         <div className="flex items-start space-x-6 pl-44 pr-6 py-6 h- bg-gray-100 ">
           <div className="w-2/3 space-y-6">
             <TweetSomething />
-            <div className="space-y-2">
-              <div className="flex py-1 space-x-1 bg-gray-100 text-gray-500 text-xs font-bold">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
+            <div className="space-y-1">
+              <div className="flex py-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
+                <span className="material-icons text-md">loop</span>
                 <h1>Daniel Something retweeted</h1>
               </div>
               <div className="px-5 py-5 bg-white rounded-xl space-y-3">
@@ -66,80 +57,32 @@ const Home: NextPage = () => {
                     type="button"
                     className="flex items-center justify-center font-semibold space-x-2 flex-1 text-gray-600"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                      />
-                    </svg>
+                    <span className="material-icons-outlined">comment</span>
                     <h1>Comment</h1>
                   </button>
                   <button
                     type="button"
                     className="flex items-center justify-center font-semibold space-x-2 flex-1 text-green-500"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
+                    <span className="material-icons-outlined">loop</span>
                     <h1>Retweeted</h1>
                   </button>
                   <button
                     type="button"
                     className="flex items-center justify-center font-semibold space-x-2 flex-1 text-red-500"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                      />
-                    </svg>
+                    <span className="material-icons-outlined">
+                      favorite_border
+                    </span>
                     <h1>Liked</h1>
                   </button>
                   <button
                     type="button"
                     className="flex items-center justify-center font-semibold space-x-2 flex-1 text-blue-500"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
+                    <span className="material-icons-outlined">
+                      bookmark_border
+                    </span>
                     <h1>Saved</h1>
                   </button>
                 </div>
@@ -152,18 +95,9 @@ const Home: NextPage = () => {
                   />
                   <div className="flex items-center justify-between p-2 h-9 w-full border rounded-lg bg-gray-100 text-gray-400 ">
                     <div className="text-sm">Tweet your reply</div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <span className="material-icons-outlined">
+                      insert_photo
+                    </span>
                   </div>
                 </div>
               </div>
