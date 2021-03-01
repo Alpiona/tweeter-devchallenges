@@ -1,5 +1,6 @@
 import Document, {
   DocumentContext,
+  DocumentInitialProps,
   Head,
   Html,
   Main,
@@ -8,7 +9,9 @@ import Document, {
 import Layout from '../components/Layout';
 
 class MyDocument extends Document {
-  static async getInitialProps(ctx: DocumentContext) {
+  static async getInitialProps(
+    ctx: DocumentContext,
+  ): Promise<DocumentInitialProps> {
     const initialProps = await Document.getInitialProps(ctx);
     return { ...initialProps };
   }
