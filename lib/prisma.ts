@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 
 const globalAny: any = global;
 
+// eslint-disable-next-line
 let prisma = new PrismaClient();
 
 if (process.env.NODE_ENV === 'production') {

@@ -29,9 +29,6 @@ model profile {
 model follower {
   follower_id                            Int
   following_id                           Int
-  created_at                             DateTime  @db.Timestamp(6)
-  deleted_at                             DateTime  @db.Timestamp(6)
-  updated_at                             DateTime? @db.Timestamp(6)
   follower                               profile   @relation("follower", fields: [follower_id], references: [id])
   following                              profile   @relation("following", fields: [following_id], references: [id])
 
@@ -48,8 +45,6 @@ model hashtag {
 model retweet {
   tweet_id   Int
   profile_id Int
-  created_at DateTime  @default(now())
-  deleted_at DateTime?
   profile    profile   @relation(fields: [profile_id], references: [id])
   tweet      tweet     @relation(fields: [tweet_id], references: [id])
 
@@ -88,7 +83,6 @@ model tweet_comment {
 model tweet_hashtag {
   tweet_id   Int
   hashtag_id Int
-  created_at DateTime @default(now())
   hashtag    hashtag  @relation(fields: [hashtag_id], references: [id])
   tweet      tweet    @relation(fields: [tweet_id], references: [id])
 
@@ -107,8 +101,6 @@ model tweet_image {
 model tweet_liked {
   tweet_id   Int
   profile_id Int
-  created_at DateTime  @default(now())
-  deleted_at DateTime?
   profile    profile   @relation(fields: [profile_id], references: [id])
   tweet      tweet     @relation(fields: [tweet_id], references: [id])
 
@@ -118,8 +110,6 @@ model tweet_liked {
 model tweet_saved {
   tweet_id   Int
   profile_id Int
-  created_at DateTime  @default(now())
-  deleted_at DateTime?
   profile    profile   @relation(fields: [profile_id], references: [id])
   tweet      tweet     @relation(fields: [tweet_id], references: [id])
 
