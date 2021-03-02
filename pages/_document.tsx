@@ -6,7 +6,6 @@ import Document, {
   Main,
   NextScript,
 } from 'next/document';
-import Layout from '../components/Layout';
 
 class MyDocument extends Document {
   static async getInitialProps(
@@ -33,9 +32,7 @@ class MyDocument extends Document {
           />
         </Head>
         <body>
-          <Layout>
-            <Main />
-          </Layout>
+          <Main />
           <NextScript />
         </body>
       </Html>

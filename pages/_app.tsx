@@ -1,3 +1,4 @@
+import { Provider } from 'next-auth/client';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -9,7 +10,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <Head>
         <title>Tweeter</title>
       </Head>
-      <Component {...pageProps} />
+      <Provider session={pageProps.session}>
+        <Component {...pageProps} />
+      </Provider>
     </>
   );
 }

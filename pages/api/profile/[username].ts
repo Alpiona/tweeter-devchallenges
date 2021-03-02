@@ -34,12 +34,12 @@ export default async (
 
   const ret: ProfileData = {
     username: result.username,
-    profile_image: result.profile_image,
+    profile_image: result.profileImage,
     description: result.description,
     follower_qty: result.follower.length.toString(),
     following_qty: result.following.length.toString(),
     is_following: isFollowing,
-    background_image: result.background_image,
+    background_image: result.backgroundImage,
   };
 
   res.status(200).json(ret);

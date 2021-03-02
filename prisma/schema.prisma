@@ -7,111 +7,182 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model profile {
+
+model Account {
+  id                 Int       @default(autoincrement()) @id
+  compoundId         String    @unique @map(name: "compound_id")
+  userId             Int       @map(name: "user_id")
+  providerType       String    @map(name: "provider_type")
+  providerId         String    @map(name: "provider_id")
+  providerAccountId  String    @map(name: "provider_account_id")
+  refreshToken       String?   @map(name: "refresh_token")
+  accessToken        String?   @map(name: "access_token")
+  accessTokenExpires DateTime? @map(name: "access_token_expires")
+  createdAt          DateTime  @default(now()) @map(name: "created_at")
+  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+
+  @@index([providerAccountId], name: "providerAccountId")
+  @@index([providerId], name: "providerId")
+  @@index([userId], name: "userId")
+
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           Int      @default(autoincrement()) @id
+  userId       Int      @map(name: "user_id")
+  expires      DateTime
+  sessionToken String   @unique @map(name: "session_token")
+  accessToken  String   @unique @map(name: "access_token")
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "sessions")
+}
+
+model User {
+  id            Int       @default(autoincrement()) @id
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map(name: "email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+
+  @@map(name: "users")
+}
+
+model VerificationRequest {
+  id         Int      @default(autoincrement()) @id
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime  @default(now()) @map(name: "created_at")
+  updatedAt  DateTime  @default(now()) @map(name: "updated_at")
+
+  @@map(name: "verification_requests")
+}
+
+model Profile {
   id                                      Int             @id @default(autoincrement())
   username                                String          @unique
   email                                   String          @unique
   description                             String?
-  profile_image                           String?
-  background_image                        String?
-  created_at                              DateTime        @default(now())
-  updated_at                              DateTime        @updatedAt
-  deleted_at                              DateTime?
-  follower                                follower[]      @relation("follower")
-  following                               follower[]     @relation("following")
-  retweet                                 retweet[]
-  tweet                                   tweet[]
-  tweet_comment                           tweet_comment[]
-  tweet_liked                             tweet_liked[]
-  tweet_saved                             tweet_saved[]
+  profileImage                           String?          @map(name: "profile_image")
+  backgroundImage                        String?         @map(name: "background_image")
+  createdAt                              DateTime        @default(now()) @map(name: "created_at")
+  updatedAt                              DateTime        @updatedAt @map(name: "updated_at")
+  deletedAt                              DateTime?        @map(name: "deleted_at")
+  follower                                Follower[]      @relation("follower")
+  following                               Follower[]     @relation("following")
+  retweet                                 Retweet[]
+  tweet                                   Tweet[]
+  tweet_comment                           TweetComment[]
+  tweet_liked                             TweetLiked[]
+  tweet_saved                             TweetSaved[]
+
+  @@map(name: "profile")
 }
 
-model follower {
+model Follower {
   follower_id                            Int
   following_id                           Int
-  follower                               profile   @relation("follower", fields: [follower_id], references: [id])
-  following                              profile   @relation("following", fields: [following_id], references: [id])
+  follower                               Profile   @relation("follower", fields: [follower_id], references: [id])
+  following                              Profile   @relation("following", fields: [following_id], references: [id])
 
   @@id([follower_id, following_id])
+  @@map(name: "follower")
 }
 
-model hashtag {
+model Hashtag {
   id            Int             @id @default(autoincrement())
   content       String
-  created_at    DateTime        @default(now())
-  tweet_hashtag tweet_hashtag[]
+  tweet_hashtag TweetHashtag[]
+
+  @@map(name: "hashtag")
 }
 
-model retweet {
+model Retweet {
   tweet_id   Int
   profile_id Int
-  profile    profile   @relation(fields: [profile_id], references: [id])
-  tweet      tweet     @relation(fields: [tweet_id], references: [id])
+  profile    Profile   @relation(fields: [profile_id], references: [id])
+  tweet      Tweet     @relation(fields: [tweet_id], references: [id])
 
   @@id([tweet_id, profile_id])
+  @@map(name: "retweet")
 }
 
-model tweet {
+model Tweet {
   id            Int             @id @default(autoincrement())
-  profile_id    Int
+  profileId    Int            @map(name: "profile_id")
   content       String
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
-  deleted_at    DateTime?
-  profile       profile         @relation(fields: [profile_id], references: [id])
-  retweet       retweet[]
-  tweet_comment tweet_comment[]
-  tweet_hashtag tweet_hashtag[]
-  tweet_image   tweet_image[]
-  tweet_liked   tweet_liked[]
-  tweet_saved   tweet_saved[]
+  createdAt     DateTime        @default(now()) @map(name: "created_at")
+  updatedAt     DateTime        @updatedAt @map(name: "updated_at")
+  deletedAt     DateTime?        @map(name: "deleted_at")
+  profile       Profile         @relation(fields: [profileId], references: [id])
+  retweet       Retweet[]
+  tweetComment TweetComment[]
+  tweetHashtag TweetHashtag[]
+  tweetImage   TweetImage[]
+  tweetLiked   TweetLiked[]
+  tweetSaved   TweetSaved[]
+
+  @@map(name: "tweet")
 }
 
-model tweet_comment {
+model TweetComment {
   id          Int       @id @default(autoincrement())
-  tweet_id    Int
-  profile_id  Int
+  tweetId    Int        @map(name: "tweet_id")
+  profileId  Int        @map(name: "profile_id")
   content     String
   image       String?
-  created_at  DateTime  @default(now())
-  upddated_at DateTime  @updatedAt
-  deleted_at  DateTime?
-  profile     profile   @relation(fields: [profile_id], references: [id])
-  tweet       tweet     @relation(fields: [tweet_id], references: [id])
+  createdAt   DateTime        @default(now()) @map(name: "created_at")
+  updatedAt   DateTime        @updatedAt @map(name: "updated_at")
+  deletedAt   DateTime?        @map(name: "deleted_at")
+  profile     Profile   @relation(fields: [profileId], references: [id])
+  tweet       Tweet     @relation("tweetComment", fields: [tweetId], references: [id])
+
+  @@map(name: "tweet_comment")
 }
 
-model tweet_hashtag {
-  tweet_id   Int
-  hashtag_id Int
-  hashtag    hashtag  @relation(fields: [hashtag_id], references: [id])
-  tweet      tweet    @relation(fields: [tweet_id], references: [id])
+model TweetHashtag {
+  tweetId   Int       @map(name: "tweet_id")
+  hashtagId Int       @map(name: "hashtag_id")
+  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
+  tweet      Tweet    @relation(fields: [tweetId], references: [id])
 
-  @@id([tweet_id, hashtag_id])
+  @@id([tweetId, hashtagId])
+  @@map(name: "tweet_hashtag")
 }
 
-model tweet_image {
+model TweetImage {
   id         Int       @id @default(autoincrement())
-  tweet_id   Int
+  tweetId   Int       @map(name: "tweet_id")
   content    String
-  created_at DateTime  @default(now())
-  deleted_at DateTime?
-  tweet      tweet     @relation(fields: [tweet_id], references: [id])
+  createdAt  DateTime        @default(now()) @map(name: "created_at")
+  updatedAt  DateTime        @updatedAt @map(name: "updated_at")
+  deletedAt  DateTime?        @map(name: "deleted_at")
+  tweet      Tweet     @relation(fields: [tweetId], references: [id])
+
+  @@map(name: "tweet_image")
 }
 
-model tweet_liked {
-  tweet_id   Int
-  profile_id Int
-  profile    profile   @relation(fields: [profile_id], references: [id])
-  tweet      tweet     @relation(fields: [tweet_id], references: [id])
+model TweetLiked {
+  tweetId   Int        @map(name: "tweet_id")
+  profileId Int        @map(name: "profile_id")
+  profile    Profile   @relation(fields: [profileId], references: [id])
+  tweet      Tweet     @relation(fields: [tweetId], references: [id])
 
-  @@id([tweet_id, profile_id])
+  @@id([tweetId, profileId])
+  @@map(name: "tweet_liked")
 }
 
-model tweet_saved {
-  tweet_id   Int
-  profile_id Int
-  profile    profile   @relation(fields: [profile_id], references: [id])
-  tweet      tweet     @relation(fields: [tweet_id], references: [id])
+model TweetSaved {
+  tweetId   Int       @map(name: "tweet_id")
+  profileId Int       @map(name: "profile_id")
+  profile    Profile   @relation(fields: [profileId], references: [id])
+  tweet      Tweet     @relation(fields: [tweetId], references: [id])
 
-  @@id([tweet_id, profile_id])
+  @@id([tweetId, profileId])
+  @@map(name: "tweet_saved")
 }
