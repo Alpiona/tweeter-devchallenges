@@ -1,10 +1,11 @@
+import { User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
+import NextAuth, { InitOptions } from 'next-auth';
 import Adapters from 'next-auth/adapters';
 import Providers from 'next-auth/providers';
 import prisma from '../../../lib/prisma';
 
-const options = {
+const options: InitOptions = {
   // Configure one or more authentication providers
   providers: [
     Providers.GitHub({
@@ -15,8 +16,12 @@ const options = {
   ],
   adapter: Adapters.Prisma.Adapter({ prisma }),
   callbacks: {
-    signIn: async (profile: any, account: any, metadata: any) => {
-      console.log(profile, 'is the profile');
+    signIn: async (
+      user: User,
+      account: any,
+      metadata: any,
+    ): Promise<boolean> => {
+      console.log(user, 'is the profile');
       console.log(account, 'is the account');
       console.log(metadata, 'is the metadata');
       const res = await fetch('https://api.github.com/user/emails', {
@@ -30,17 +35,25 @@ const options = {
       }
       const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
       // eslint-disable-next-line
-      profile.email = sortedEmails[0].email;
+      user.email = sortedEmails[0].email;
 
-      await prisma.profile.create({
-        data: {
-          username: profile.name,
-          name: profile.name,
-          email: profile.email,
-          profileImage: profile.image,
-          description: metadata.bio,
-        },
+      const exist = await prisma.profile.findUnique({
+        where: { email: user.email },
       });
+
+      if (exist == null) {
+        await prisma.profile.create({
+          data: {
+            username: user.name,
+            name: user.name,
+            email: user.email,
+            profileImage: user.image,
+            description: metadata.bio,
+          },
+        });
+      }
+
+      return true;
     },
   },
 };
