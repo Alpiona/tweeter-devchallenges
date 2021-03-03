@@ -1,6 +1,6 @@
 ## Objective
 
-This project aims to test new technologies that are being used in the market such as Next.js and Tailwindcss, in addition to improving my knowledge, especially in the frontend that is not my main area.
+This project aims to test new technologies that are being used in the market such as Next.js and Tailwind CSS, in addition to improving my knowledge, especially in the frontend that is not my main area.
 
 ## Updates
 
@@ -13,8 +13,14 @@ The project was published on vercel to be able to update automatically with each
 - Typescript
 - Vercel
 - Next.js
+- NextAuth.js
+
+## Backend
+
+- Prisma
+- AWS RDS (PostgreSQL)
 
 ### Frontend
 
-- Tailwindcss
+- Tailwind CSS
 - React

@@ -1,7 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { profile } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getSession } from 'next-auth/client';
 import prisma from '../../lib/prisma';
 
 type Data = {
@@ -10,12 +11,14 @@ type Data = {
 
 export default async (
   req: NextApiRequest,
-  res: NextApiResponse<profile>,
+  res: NextApiResponse<Profile>,
 ): Promise<void> => {
+  const session = await getSession({ req });
+
   const result = await prisma.profile.create({
     data: {
-      username: 'Alpiona',
-      email: 'alpiona@hotmail.com',
+      username: session.user.name,
+      email: session.user.email,
     },
   });
 

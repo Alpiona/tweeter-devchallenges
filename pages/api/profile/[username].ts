@@ -1,10 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getSession } from 'next-auth/client';
 import prisma from '../../../lib/prisma';
 
 type ProfileData = {
-  username: string;
+  name: string;
   profile_image: string;
   description?: string;
   background_image?: string;
@@ -27,13 +28,19 @@ export default async (
     },
   });
 
+  const session = await getSession({ req });
+
+  const sessionProfile = await prisma.profile.findUnique({
+    where: { username: session.user.name },
+  });
+
   const isFollowing = result.follower.includes({
-    follower_id: req.body.this,
+    follower_id: sessionProfile.id,
     following_id: result.id,
   });
 
   const ret: ProfileData = {
-    username: result.username,
+    name: result.name,
     profile_image: result.profileImage,
     description: result.description,
     follower_qty: result.follower.length.toString(),

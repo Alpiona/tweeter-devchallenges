@@ -16,7 +16,11 @@ const Header: NextComponentType = () => {
         <Link href="/bookmarks">Bookmarks</Link>
       </div>
       {!session && (
-        <button type="button" className="mr-16" onClick={() => signIn()}>
+        <button
+          type="button"
+          className="mr-16"
+          onClick={() => signIn('github')}
+        >
           Sign in
         </button>
       )}
