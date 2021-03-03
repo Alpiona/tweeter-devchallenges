@@ -25,16 +25,18 @@ const Header: NextComponentType = () => {
         </button>
       )}
       {session && (
-        <div className="flex mr-16 items-center justify-between">
-          <img
-            src={session.user.image}
-            alt=""
-            className="h-8 w-8 object-cover rounded-lg"
-          />
-          <h1 className="pl-3 font-bold font-noto text-sm">
-            {session.user.name}
-          </h1>
-        </div>
+        <Link href="/profile">
+          <div className="flex mr-16 items-center justify-between">
+            <img
+              src={session.user.image}
+              alt=""
+              className="h-8 w-8 object-cover rounded-lg"
+            />
+            <h1 className="pl-3 font-bold font-noto text-sm">
+              {session.user.name}
+            </h1>
+          </div>
+        </Link>
       )}
     </nav>
   );
