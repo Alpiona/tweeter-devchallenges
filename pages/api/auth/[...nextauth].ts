@@ -52,8 +52,6 @@ const options: InitOptions = {
           },
         });
       }
-
-      return true;
     },
   },
 };

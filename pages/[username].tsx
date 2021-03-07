@@ -1,10 +1,44 @@
-import { NextPage } from 'next';
+import { Profile } from '@prisma/client';
+import {
+  GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+} from 'next';
 import { useSession } from 'next-auth/client';
 import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
+import api from '../utils/api';
 
-const Profile: NextPage = () => {
-  // const [session, loading] = useSession();
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const res = await api<Profile[]>(`/api/profile`);
+
+//   const profiles = res.data;
+
+//   const paths = profiles.map(profile => ({
+//     params: { username: profile.username },
+//   }));
+
+//   return { paths, fallback: 'blocking' };
+// };
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const res = await fetch(
+    `http://localhost:3000/api/profile/${params.username}`,
+  );
+
+  const profile = await res.json();
+
+  console.log(profile);
+
+  //   const res = await api<Profile>(`/api/profile/${params.username}`);
+  // const profile = res.data;
+
+  return { props: { profile } };
+};
+
+const ProfilePage: NextPage = () => {
+  const [session, loading] = useSession();
 
   return (
     <Layout>
@@ -99,4 +133,4 @@ const Profile: NextPage = () => {
   );
 };
 
-export default Profile;
+export default ProfilePage;
