@@ -14,6 +14,7 @@
     "@prisma/client": "^2.17.0",
     "axios": "^0.21.1",
     "babel-plugin-superjson-next": "^0.2.3",
+    "date-fns": "^2.19.0",
     "next": "10.0.7",
     "next-auth": "^3.13.2",
     "react": "17.0.1",

@@ -1,4 +1,4 @@
-import { Follower, Profile } from '.prisma/client';
+import { Follower, Profile, Tweet } from '.prisma/client';
 import prisma from '../lib/prisma';
 
 async function createProfile(
@@ -26,8 +26,12 @@ async function createFollower(
   followingId: number,
 ): Promise<Follower> {
   return prisma.follower.create({
-    data: { follower_id: followerId, following_id: followingId },
+    data: { followerId, followingId },
   });
+}
+
+async function createTweet(profileId: number, content: string): Promise<Tweet> {
+  return prisma.tweet.create({ data: { profileId, content } });
 }
 
 async function addProfiles(): Promise<Array<Profile>> {
@@ -38,7 +42,7 @@ async function addProfiles(): Promise<Array<Profile>> {
       'First User',
       'first.user',
       'first@user.com',
-      'profile.jpg',
+      '/profile.jpg',
       'background.jpeg',
       'Description test',
     ),
@@ -49,8 +53,8 @@ async function addProfiles(): Promise<Array<Profile>> {
       'Second User',
       'second.user',
       'second@user.com',
-      'profile2.jpg',
-      'background2.jpg',
+      '/profile2.jpg',
+      '/background2.jpg',
       'just to test size of description|| just to test size of description||just to test size of description||just to test size of description||just to test size of description||just to test size of description||just to test size of description||',
     ),
   );
@@ -60,8 +64,8 @@ async function addProfiles(): Promise<Array<Profile>> {
       'Third User',
       'third.user',
       'third@user.com',
-      'profile3.jpg',
-      'background3.jpg',
+      '/profile3.jpg',
+      '/background3.jpg',
       'another description',
     ),
   );
@@ -71,8 +75,8 @@ async function addProfiles(): Promise<Array<Profile>> {
       'Fourth User',
       'fourth.user',
       'fourth@user.com',
-      'profile4.jpg',
-      'background4.jpg',
+      '/profile4.jpg',
+      '/background4.jpg',
     ),
   );
 
@@ -81,7 +85,7 @@ async function addProfiles(): Promise<Array<Profile>> {
       'Fifth User',
       'fifth.user',
       'fifth@user.com',
-      'profile5.jpg',
+      '/profile5.jpg',
       null,
       'last one of test. this user does not have background image',
     ),
@@ -100,9 +104,29 @@ async function addFollowers(profiles: Array<Profile>): Promise<void> {
   await createFollower(profiles[3].id, profiles[4].id);
 }
 
+async function addTweets(profiles: Array<Profile>): Promise<Array<Tweet>> {
+  const ret = [];
+  ret.push(await createTweet(profiles[0].id, 'First tweet of first user'));
+  ret.push(await createTweet(profiles[0].id, 'Second tweet of first user'));
+  ret.push(
+    await createTweet(
+      profiles[0].id,
+      'First tweet of second user. Will have image',
+    ),
+  );
+  ret.push(
+    await createTweet(
+      profiles[0].id,
+      'First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space.',
+    ),
+  );
+  return ret;
+}
+
 async function main(): Promise<void> {
   const profiles = await addProfiles();
   await addFollowers(profiles);
+  const tweets = await addTweets(profiles);
 }
 
 main()

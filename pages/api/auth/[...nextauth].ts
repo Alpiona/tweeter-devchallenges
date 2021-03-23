@@ -44,7 +44,7 @@ const options: InitOptions = {
       if (exist == null) {
         await prisma.profile.create({
           data: {
-            username: user.name,
+            username: user.name.toLowerCase(),
             name: user.name,
             email: user.email,
             profileImage: user.image,

@@ -86,12 +86,12 @@ model Profile {
 }
 
 model Follower {
-  follower_id                            Int
-  following_id                           Int
-  follower                               Profile   @relation("follower", fields: [follower_id], references: [id])
-  following                              Profile   @relation("following", fields: [following_id], references: [id])
+  followerId                            Int     @map(name: "follower_id")
+  followingId                           Int     @map(name: "following_id")
+  follower                               Profile   @relation("follower", fields: [followingId], references: [id])
+  following                              Profile   @relation("following", fields: [followerId], references: [id])
 
-  @@id([follower_id, following_id])
+  @@id([followerId, followingId])
   @@map(name: "follower")
 }
 

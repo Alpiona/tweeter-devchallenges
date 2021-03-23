@@ -3,31 +3,49 @@ import {
   InferGetServerSidePropsType,
   NextPage,
 } from 'next';
-import { useSession } from 'next-auth/client';
+import { getSession, useSession } from 'next-auth/client';
+import { format } from 'date-fns';
 import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
 import prisma from '../lib/prisma';
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  params,
+}) => {
+  const session = await getSession({ req });
+
   const profile = await prisma.profile.findUnique({
     where: { username: String(params?.username) },
-    include: { follower: true, following: true },
+    include: { follower: true, following: true, tweet: true },
   });
+
+  let isFollowing = false;
 
   if (!profile.follower) {
     profile.follower = [];
   }
+
   if (!profile.following) {
     profile.following = [];
   }
 
-  console.log(`Profile: ${profile.following}`);
+  if (session) {
+    const sessionProfile = await prisma.profile.findUnique({
+      where: { email: session.user.email },
+    });
 
-  return { props: { profile } };
+    isFollowing = profile.follower.some(
+      follower => follower.followerId === sessionProfile.id,
+    );
+  }
+
+  return { props: { profile, isFollowing } };
 };
 
 const ProfilePage: NextPage = ({
   profile,
+  isFollowing,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [session, loading] = useSession();
 
@@ -35,14 +53,14 @@ const ProfilePage: NextPage = ({
     <Layout>
       <div
         className="w-full h-72 bg-center absolute z-0"
-        style={{ backgroundImage: `url('/${profile.backgroundImage}')` }}
+        style={{ backgroundImage: `url('${profile.backgroundImage}')` }}
       />
       <div className="bg-gray-100 h-auto">
         <div className="w-2/3 mx-auto space-y-6">
           <div className="flex bg-white mt-56 rounded-xl z-10 relative">
             <div className="w-auto">
               <img
-                src={`/${profile.profileImage}`}
+                src={`${profile.profileImage}`}
                 alt=""
                 className="left-5 bottom-12 rounded-xl border-white border-2 relative w-36 h-36 object-cover"
               />
@@ -64,13 +82,24 @@ const ProfilePage: NextPage = ({
                     <div className="font-medium text-gray-500">Followers</div>
                   </div>
                 </div>
-                <button
-                  className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-blue-500 text-white rounded-md text-sm font-medium"
-                  type="button"
-                >
-                  <span className="material-icons">person_add</span>
-                  <h1>Follow</h1>
-                </button>
+                {!isFollowing && (
+                  <button
+                    className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-blue-500 text-white rounded-md text-sm font-medium"
+                    type="button"
+                  >
+                    <span className="material-icons">person_add</span>
+                    <h1>Follow</h1>
+                  </button>
+                )}
+                {isFollowing && (
+                  <button
+                    className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-gray-300 text-gray-600 rounded-md text-sm font-medium"
+                    type="button"
+                  >
+                    <span className="material-icons">person_remove</span>
+                    <h1>Unfollow</h1>
+                  </button>
+                )}
               </div>
               <div className="text-semibold text-lg h-24 w-4/5 text-gray-500">
                 {profile.description}
@@ -89,34 +118,22 @@ const ProfilePage: NextPage = ({
               </div>
             </div>
             <div className="w-4/5 space-y-6">
-              <Tweet
-                retweetedBy=""
-                userImg="/profile6.jpg"
-                userName="Waqar Bloom"
-                date="15 August at 23:33"
-                content="“The gladdest moment in human life, methinks, is a departure into unknown lands.” – Sir Richard Burton"
-                img="/background4.jpg"
-                commentsQty="449"
-                retweetsQty="59k"
-                savedQty="234"
-                liked={false}
-                retweeted={false}
-                saved={false}
-              />
-              <Tweet
-                retweetedBy="Daniel Something"
-                userImg="/profile2.jpg"
-                userName="Peter Jackson"
-                date="23 August at 08:11"
-                content='"We travel, some of us forever, to seek other places, other lives, other souls." - Anais Nin'
-                img="/background.jpeg"
-                commentsQty="449"
-                retweetsQty="59k"
-                savedQty="234"
-                liked
-                retweeted
-                saved
-              />
+              {profile.tweet.map(tweet => (
+                <Tweet
+                  retweetedBy=""
+                  userImg={profile.profileImage}
+                  userName={profile.name}
+                  date={format(tweet.createdAt, "d LLLL 'at' hh:mm")}
+                  content={tweet.content}
+                  img={tweet.image}
+                  commentsQty=""
+                  retweetsQty=""
+                  savedQty=""
+                  liked
+                  retweeted
+                  saved
+                />
+              ))}
             </div>
           </div>
         </div>
