@@ -1,11 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession, Session } from 'next-auth/client';
-import { getToken } from 'next-auth/jwt';
 import prisma from '../../../lib/prisma';
-import api from '../../../utils/api';
 
 type ProfileData = {
   name: string;
@@ -20,11 +16,11 @@ type ProfileData = {
 
 export default async (
   req: NextApiRequest,
-  res: NextApiResponse<Session>,
+  res: NextApiResponse,
 ): Promise<void> => {
   const username = req.query.username as string;
 
-  const result = await prisma.profile.findUnique({
+  const profile = await prisma.profile.findUnique({
     where: {
       username,
     },
@@ -34,39 +30,15 @@ export default async (
     },
   });
 
-  const apiRes = await axios.get<Session>(
-    `http://localhost:3000/api/auth/session`,
-  );
-
-  const secret = process.env.BASE_URL;
-  const session = await getSession({ req });
-  const token = await getToken({ req, secret });
-
-  console.log(apiRes.data);
-  console.log(session);
-  console.log(token);
-
-  res.status(200).json(session);
-  return;
-
-  const sessionProfile = await prisma.profile.findUnique({
-    where: { username: apiRes.data.user.name },
-  });
-
-  const isFollowing = result.follower.includes({
-    follower_id: sessionProfile.id,
-    following_id: result.id,
-  });
-
   const ret: ProfileData = {
-    name: result.name,
-    username: result.username,
-    profile_image: result.profileImage,
-    description: result.description,
-    follower_qty: result.follower.length.toString(),
-    following_qty: result.following.length.toString(),
-    is_following: isFollowing,
-    background_image: result.backgroundImage,
+    name: profile.name,
+    username: profile.username,
+    profile_image: profile.profileImage,
+    description: profile.description,
+    follower_qty: profile.follower.length.toString(),
+    following_qty: profile.following.length.toString(),
+    is_following: true,
+    background_image: profile.backgroundImage,
   };
 
   res.status(200).json(ret);

@@ -1,57 +1,48 @@
-import { Profile } from '@prisma/client';
 import {
   GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
+  InferGetServerSidePropsType,
   NextPage,
 } from 'next';
 import { useSession } from 'next-auth/client';
 import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
-import api from '../utils/api';
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const res = await api<Profile[]>(`/api/profile`);
-
-//   const profiles = res.data;
-
-//   const paths = profiles.map(profile => ({
-//     params: { username: profile.username },
-//   }));
-
-//   return { paths, fallback: 'blocking' };
-// };
+import prisma from '../lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const res = await fetch(
-    `http://localhost:3000/api/profile/${params.username}`,
-  );
+  const profile = await prisma.profile.findUnique({
+    where: { username: String(params?.username) },
+    include: { follower: true, following: true },
+  });
 
-  const profile = await res.json();
+  if (!profile.follower) {
+    profile.follower = [];
+  }
+  if (!profile.following) {
+    profile.following = [];
+  }
 
-  console.log(profile);
-
-  //   const res = await api<Profile>(`/api/profile/${params.username}`);
-  // const profile = res.data;
+  console.log(`Profile: ${profile.following}`);
 
   return { props: { profile } };
 };
 
-const ProfilePage: NextPage = () => {
+const ProfilePage: NextPage = ({
+  profile,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [session, loading] = useSession();
 
   return (
     <Layout>
       <div
         className="w-full h-72 bg-center absolute z-0"
-        style={{ backgroundImage: "url('/background.jpeg')" }}
+        style={{ backgroundImage: `url('/${profile.backgroundImage}')` }}
       />
       <div className="bg-gray-100 h-auto">
         <div className="w-2/3 mx-auto space-y-6">
           <div className="flex bg-white mt-56 rounded-xl z-10 relative">
             <div className="w-auto">
               <img
-                src="/profile2.jpg"
+                src={`/${profile.profileImage}`}
                 alt=""
                 className="left-5 bottom-12 rounded-xl border-white border-2 relative w-36 h-36 object-cover"
               />
@@ -59,13 +50,17 @@ const ProfilePage: NextPage = () => {
             <div className="w-full px-10 py-4 space-y-4">
               <div className="flex justify-between flex-grow relative">
                 <div className="flex items-center space-x-6">
-                  <div className="font-semibold text-2xl">Daniel Jensen</div>
+                  <div className="font-semibold text-2xl">{profile.name}</div>
                   <div className="flex space-x-1 text-sm">
-                    <div className="font-semibold">2,506</div>
+                    <div className="font-semibold">
+                      {profile.following.length.toString()}
+                    </div>
                     <div className="font-medium text-gray-500">Following</div>
                   </div>
                   <div className="flex space-x-1 text-sm">
-                    <div className="font-semibold">10.8K</div>
+                    <div className="font-semibold">
+                      {profile.follower.length.toString()}
+                    </div>
                     <div className="font-medium text-gray-500">Followers</div>
                   </div>
                 </div>
@@ -78,10 +73,7 @@ const ProfilePage: NextPage = () => {
                 </button>
               </div>
               <div className="text-semibold text-lg h-24 w-4/5 text-gray-500">
-                Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰
-                Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰
-                Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰
-                Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰
+                {profile.description}
               </div>
             </div>
           </div>

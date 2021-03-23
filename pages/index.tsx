@@ -1,14 +1,9 @@
 import { NextPage } from 'next';
-import { getSession, useSession } from 'next-auth/client';
 import FollowSugestion from '../components/FollowSugestion';
 import Layout from '../components/Layout';
 import TrendsList from '../components/TrendsList';
 import Tweet from '../components/Tweet';
 import TweetSomething from '../components/TweetSomething';
-
-export async function getServerSideProps(ctx) {
-  return { props: { session: await getSession(ctx) } };
-}
 
 const Home: NextPage = () => {
   return (
