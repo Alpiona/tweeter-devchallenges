@@ -110,23 +110,34 @@ async function addTweets(profiles: Array<Profile>): Promise<Array<Tweet>> {
   ret.push(await createTweet(profiles[0].id, 'Second tweet of first user'));
   ret.push(
     await createTweet(
-      profiles[0].id,
+      profiles[1].id,
       'First tweet of second user. Will have image',
     ),
   );
   ret.push(
     await createTweet(
-      profiles[0].id,
+      profiles[2].id,
       'First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space.',
     ),
   );
   return ret;
 }
 
+async function addRetweets(
+  profiles: Array<Profile>,
+  tweets: Array<Tweet>,
+): Promise<void> {
+  await prisma.profile.update({
+    where: { id: profiles[0].id },
+    data: { retweets: { set: { id: tweets[2].id } } },
+  });
+}
+
 async function main(): Promise<void> {
   const profiles = await addProfiles();
   await addFollowers(profiles);
   const tweets = await addTweets(profiles);
+  await addRetweets(profiles, tweets);
 }
 
 main()

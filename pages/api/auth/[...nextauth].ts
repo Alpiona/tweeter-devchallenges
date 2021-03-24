@@ -21,9 +21,9 @@ const options: InitOptions = {
       account: any,
       metadata: any,
     ): Promise<boolean> => {
-      console.log(user, 'is the profile');
-      console.log(account, 'is the account');
-      console.log(metadata, 'is the metadata');
+      // console.log(user, 'is the profile');
+      // console.log(account, 'is the account');
+      // console.log(metadata, 'is the metadata');
       const res = await fetch('https://api.github.com/user/emails', {
         headers: {
           Authorization: `token ${account.accessToken}`,

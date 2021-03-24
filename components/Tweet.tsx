@@ -33,7 +33,7 @@ const Tweet: FC<TweetProps> = ({
 }) => {
   return (
     <div>
-      {retweetedBy && (
+      {retweetedBy !== userName && (
         <div className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
           <span className="material-icons text-md">loop</span>
           <h1 className="font-noto">{`${retweetedBy} retweeted`}</h1>

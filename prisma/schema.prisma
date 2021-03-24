@@ -74,13 +74,13 @@ model Profile {
   createdAt                              DateTime        @default(now()) @map(name: "created_at")
   updatedAt                              DateTime        @updatedAt @map(name: "updated_at")
   deletedAt                              DateTime?        @map(name: "deleted_at")
-  follower                                Follower[]      @relation("follower")
+  followers                                Follower[]      @relation("follower")
   following                               Follower[]     @relation("following")
-  retweet                                 Retweet[]
-  tweet                                   Tweet[]
-  tweet_comment                           TweetComment[]
-  tweet_liked                             TweetLiked[]
-  tweet_saved                             TweetSaved[]
+  retweets                                 Tweet[]        @relation("retweet")
+  tweets                                   Tweet[]
+  tweetComments                           TweetComment[]
+  tweetLikes                             TweetLiked[]
+  tweetSaves                             TweetSaved[]
 
   @@map(name: "profile")
 }
@@ -103,15 +103,6 @@ model Hashtag {
   @@map(name: "hashtag")
 }
 
-model Retweet {
-  tweet_id   Int
-  profile_id Int
-  profile    Profile   @relation(fields: [profile_id], references: [id])
-  tweet      Tweet     @relation(fields: [tweet_id], references: [id])
-
-  @@id([tweet_id, profile_id])
-  @@map(name: "retweet")
-}
 
 model Tweet {
   id            Int             @id @default(autoincrement())
@@ -121,12 +112,12 @@ model Tweet {
   updatedAt     DateTime        @updatedAt @map(name: "updated_at")
   deletedAt     DateTime?        @map(name: "deleted_at")
   profile       Profile         @relation(fields: [profileId], references: [id])
-  retweet       Retweet[]
-  tweetComment TweetComment[]   @relation("tweetComment")
-  tweetHashtag TweetHashtag[]
-  tweetImage   TweetImage[]
-  tweetLiked   TweetLiked[]
-  tweetSaved   TweetSaved[]
+  retweets       Profile[]    @relation("retweet")
+  comments TweetComment[]   @relation("tweetComment")
+  hashtags TweetHashtag[]
+  images   TweetImage[]
+  likes   TweetLiked[]
+  saves   TweetSaved[]
 
   @@map(name: "tweet")
 }
