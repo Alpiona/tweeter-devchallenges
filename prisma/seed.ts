@@ -30,8 +30,40 @@ async function createFollower(
   });
 }
 
-async function createTweet(profileId: number, content: string): Promise<Tweet> {
-  return prisma.tweet.create({ data: { profileId, content } });
+async function createTweet(
+  profileId: number,
+  content: string,
+  images: string[],
+  isPublic = true,
+): Promise<Tweet> {
+  const tweet = await prisma.tweet.create({
+    data: { profileId, content, isPublic },
+  });
+
+  images.map(async image => {
+    await prisma.tweet.update({
+      where: { id: tweet.id },
+      data: { images: { create: { content: image } } },
+    });
+  });
+
+  return tweet;
+}
+
+async function createComment(
+  tweetId: number,
+  profileId: number,
+  content: string,
+  image: string = null,
+): Promise<void> {
+  await prisma.tweetComment.create({
+    data: {
+      tweetId,
+      profileId,
+      content,
+      image,
+    },
+  });
 }
 
 async function addProfiles(): Promise<Array<Profile>> {
@@ -106,18 +138,36 @@ async function addFollowers(profiles: Array<Profile>): Promise<void> {
 
 async function addTweets(profiles: Array<Profile>): Promise<Array<Tweet>> {
   const ret = [];
-  ret.push(await createTweet(profiles[0].id, 'First tweet of first user'));
-  ret.push(await createTweet(profiles[0].id, 'Second tweet of first user'));
+  ret.push(await createTweet(profiles[0].id, 'First tweet of first user', []));
+  ret.push(
+    await createTweet(
+      profiles[0].id,
+      'Second tweet of first user with some images',
+      ['/image2.jpg', '/image3.jpg'],
+    ),
+  );
+
+  ret.push(
+    await createTweet(
+      profiles[0].id,
+      'Third tweet of first user. Not public!',
+      [],
+      false,
+    ),
+  );
+
   ret.push(
     await createTweet(
       profiles[1].id,
       'First tweet of second user. Will have image',
+      ['/image.jpg'],
     ),
   );
   ret.push(
     await createTweet(
       profiles[2].id,
       'First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space. First tweet of third user. Testing space.',
+      [],
     ),
   );
   return ret;
@@ -133,11 +183,30 @@ async function addRetweets(
   });
 }
 
+async function addComments(
+  profiles: Array<Profile>,
+  tweets: Array<Tweet>,
+): Promise<void> {
+  await createComment(
+    tweets[0].id,
+    profiles[1].id,
+    'First comment of second user in the first user first tweet.',
+  );
+
+  await createComment(
+    tweets[0].id,
+    profiles[1].id,
+    'Second comment of third user in the first user first tweet with image.',
+    '/image4.jpg',
+  );
+}
+
 async function main(): Promise<void> {
   const profiles = await addProfiles();
   await addFollowers(profiles);
   const tweets = await addTweets(profiles);
   await addRetweets(profiles, tweets);
+  await addComments(profiles, tweets);
 }
 
 main()

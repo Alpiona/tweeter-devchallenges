@@ -108,6 +108,7 @@ model Tweet {
   id            Int             @id @default(autoincrement())
   profileId    Int            @map(name: "profile_id")
   content       String
+  isPublic      Boolean         @map(name: "is_public")
   createdAt     DateTime        @default(now()) @map(name: "created_at")
   updatedAt     DateTime        @updatedAt @map(name: "updated_at")
   deletedAt     DateTime?        @map(name: "deleted_at")
