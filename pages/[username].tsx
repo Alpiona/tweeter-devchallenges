@@ -1,102 +1,108 @@
 import {
   GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
   InferGetServerSidePropsType,
   NextPage,
 } from 'next';
-import { getSession, useSession } from 'next-auth/client';
-import { format } from 'date-fns';
+import { useSession } from 'next-auth/client';
+import { format, parseISO } from 'date-fns';
+import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
-import prisma from '../lib/prisma';
 import SideFilterMenu from '../components/SideFilterMenu';
 import ProfileHeader from '../components/ProfileHeader';
+import { api } from '../services/api';
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  params,
-}) => {
-  const session = await getSession({ req });
+type TweetData = {
+  id: number;
+  profileName: string;
+  profileUsername: string;
+  profileImage: string;
+  updatedAt: string;
+  createdAt: string;
+  content: string;
+  commentsQty: number;
+  retweetsQty: number;
+  savesQty: number;
+  isLiked: boolean;
+  isRetweeted: boolean;
+  isSaved: boolean;
+};
 
-  const profile = await prisma.profile.findUnique({
-    where: { username: String(params?.username) },
-    include: {
-      followers: true,
-      following: true,
-      tweets: {
-        include: {
-          profile: true,
-          comments: true,
-          images: true,
-          likes: true,
-          retweets: true,
-          saves: true,
-        },
-      },
-      tweetLikes: true,
-      tweetSaves: true,
-      retweets: {
-        include: {
-          profile: true,
-          comments: true,
-          images: true,
-          likes: true,
-          retweets: true,
-          saves: true,
-        },
-      },
-    },
-  });
+type ProfileData = {
+  name: string;
+  username: string;
+  profileImage: string;
+  description: string;
+  backgroundImage: string;
+  followingQty: number;
+  followerQty: number;
+};
 
-  profile.tweets.push(...profile.retweets);
-  profile.tweets.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+export const getStaticPaths: GetStaticPaths = async () => {
+  return { paths: [], fallback: 'blocking' };
+};
 
-  let isFollowing = false;
-
-  if (session) {
-    const sessionProfile = await prisma.profile.findUnique({
-      where: { email: session.user.email },
-    });
-
-    isFollowing = profile.followers.some(
-      follower => follower.followerId === sessionProfile.id,
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { username } = params;
+  console.log(`profile/${(username as string).toLowerCase()}`);
+  let props = {};
+  try {
+    const response = await api.get(
+      `profile/${(username as string).toLowerCase()}`,
     );
-
-    (profile.tweets as Array<any>).forEach(tweet => {
-      tweet.isLiked = tweet.likes.some(like => like.profileId === profile.id);
-
-      tweet.isSaved = tweet.saves.some(save => save.profileId === profile.id);
-
-      tweet.isRetweeted = tweet.retweets.some(
-        retweet => retweet.profileId === profile.id,
-      );
-
-      return tweet;
-    });
+    if (response.status === 404) {
+      return {
+        redirect: { destination: '/' },
+      };
+    }
+    props = response.data;
+  } catch (err) {
+    console.log(err);
   }
 
-  return { props: { profile, isFollowing } };
+  return { props };
 };
 
 const ProfilePage: NextPage = ({
-  profile,
-  isFollowing,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [session, loading] = useSession();
+  backgroundImage,
+  description,
+  followerQty,
+  followingQty,
+  name,
+  profileImage,
+  username,
+}: ProfileData) => {
+  const [session] = useSession();
+  const [tweets, setTweets] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    api
+      .get(`tweet/${(username as string).toLowerCase()}`)
+      .then(response => {
+        console.log(response.data);
+        setTweets(response.data.tweets);
+        setIsFollowing(response.data.isFollowing);
+      })
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <Layout>
       <div
         className="w-full h-72 bg-center absolute z-0"
-        style={{ backgroundImage: `url('${profile.backgroundImage}')` }}
+        style={{ backgroundImage: `url('${backgroundImage}')` }}
       />
       <div className="bg-gray-100 h-auto">
         <div className="w-2/3 mx-auto space-y-6">
           <ProfileHeader
-            image={profile.profileImage}
-            name={profile.name}
-            followingQty={profile.following.length.toString()}
-            followersQty={profile.followers.length.toString()}
-            description={profile.description}
+            image={profileImage}
+            name={name}
+            followingQty={followingQty}
+            followersQty={followerQty}
+            description={description}
             isFollowing={isFollowing}
           />
           <div className="flex space-x-6">
@@ -104,18 +110,19 @@ const ProfilePage: NextPage = ({
               <SideFilterMenu option="1" />
             </div>
             <div className="w-4/5 space-y-6">
-              {profile.tweets.map(tweet => (
+              {tweets.map(tweet => (
                 <Tweet
                   key={tweet.id}
-                  retweetedBy={profile.name}
-                  userImg={tweet.profile.profileImage}
-                  userName={tweet.profile.name}
-                  date={format(tweet.createdAt, "d LLLL 'at' hh:mm")}
+                  retweetedBy={tweet.profileName}
+                  profileName={tweet.profileName}
+                  profileImage={tweet.profileImage}
+                  profileUsername={tweet.profileUsername}
+                  date={format(parseISO(tweet.createdAt), "d LLLL 'at' hh:mm")}
                   content={tweet.content}
-                  img={tweet.image}
-                  commentsQty={tweet.comments.length.toString()}
-                  retweetsQty={tweet.retweets.length.toString()}
-                  savedQty={tweet.saves.length.toString()}
+                  img=""
+                  commentsQty={tweet.commentsQty}
+                  retweetsQty={tweet.retweetsQty}
+                  savedQty={tweet.savesQty}
                   liked={tweet.isLiked}
                   retweeted={tweet.isRetweeted}
                   saved={tweet.isSaved}

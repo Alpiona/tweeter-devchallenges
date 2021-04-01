@@ -1,17 +1,19 @@
+import { parseISO } from 'date-fns';
 import { FC } from 'react';
 import Comment from './Comment';
 import ReactionButton from './ReactionButton';
 
 interface TweetProps {
   retweetedBy?: string;
-  userImg: string;
-  userName: string;
+  profileImage: string;
+  profileName: string;
+  profileUsername: string;
   date: string;
   content: string;
   img?: string;
-  commentsQty: string;
-  retweetsQty: string;
-  savedQty: string;
+  commentsQty: number;
+  retweetsQty: number;
+  savedQty: number;
   liked: boolean;
   retweeted: boolean;
   saved: boolean;
@@ -19,8 +21,9 @@ interface TweetProps {
 
 const Tweet: FC<TweetProps> = ({
   retweetedBy,
-  userImg,
-  userName,
+  profileImage,
+  profileName,
+  profileUsername,
   date,
   content,
   img,
@@ -33,7 +36,7 @@ const Tweet: FC<TweetProps> = ({
 }) => {
   return (
     <div>
-      {retweetedBy !== userName && (
+      {retweetedBy !== profileName && (
         <div className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
           <span className="material-icons text-md">loop</span>
           <h1 className="font-noto">{`${retweetedBy} retweeted`}</h1>
@@ -43,12 +46,12 @@ const Tweet: FC<TweetProps> = ({
       <div className="px-5 py-5 bg-white rounded-xl space-y-3">
         <div className="flex items-center space-x-3">
           <img
-            src={userImg}
+            src={profileImage}
             alt=""
             className="h-9 w-9 object-cover rounded-lg"
           />
           <div className="space-y-1">
-            <h1 className="font-medium text-sm">{userName}</h1>
+            <h1 className="font-medium text-sm">{profileName}</h1>
             <h1 className="font-medium text-gray-400 text-xs">{date}</h1>
           </div>
         </div>

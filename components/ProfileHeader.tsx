@@ -4,8 +4,8 @@ import FollowButton from './FollowButton';
 interface ProfileHeaderProps {
   image: string;
   name: string;
-  followingQty: string;
-  followersQty: string;
+  followingQty: number;
+  followersQty: number;
   description: string;
   isFollowing: boolean;
 }

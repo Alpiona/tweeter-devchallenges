@@ -179,7 +179,7 @@ async function addRetweets(
 ): Promise<void> {
   await prisma.profile.update({
     where: { id: profiles[0].id },
-    data: { retweets: { set: { id: tweets[2].id } } },
+    data: { retweets: { set: { id: tweets[4].id } } },
   });
 }
 
