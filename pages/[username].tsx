@@ -1,10 +1,4 @@
-import {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from 'next';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useSession } from 'next-auth/client';
 import { format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -28,6 +22,7 @@ type TweetData = {
   isLiked: boolean;
   isRetweeted: boolean;
   isSaved: boolean;
+  retweetedBy: string;
 };
 
 type ProfileData = {
@@ -46,7 +41,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username } = params;
-  console.log(`profile/${(username as string).toLowerCase()}`);
   let props = {};
   try {
     const response = await api.get(
@@ -82,7 +76,6 @@ const ProfilePage: NextPage = ({
     api
       .get(`tweet/${(username as string).toLowerCase()}`)
       .then(response => {
-        console.log(response.data);
         setTweets(response.data.tweets);
         setIsFollowing(response.data.isFollowing);
       })
@@ -113,11 +106,12 @@ const ProfilePage: NextPage = ({
               {tweets.map(tweet => (
                 <Tweet
                   key={tweet.id}
-                  retweetedBy={tweet.profileName}
+                  id={tweet.id}
+                  retweetedBy={tweet.retweetedBy}
                   profileName={tweet.profileName}
                   profileImage={tweet.profileImage}
                   profileUsername={tweet.profileUsername}
-                  date={format(parseISO(tweet.createdAt), "d LLLL 'at' hh:mm")}
+                  date={format(parseISO(tweet.createdAt), "dd LLLL 'at' hh:mm")}
                   content={tweet.content}
                   img=""
                   commentsQty={tweet.commentsQty}

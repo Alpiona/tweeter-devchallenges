@@ -1,9 +1,11 @@
-import { parseISO } from 'date-fns';
-import { FC } from 'react';
+import { format, parseISO } from 'date-fns';
+import { FC, useEffect, useState } from 'react';
+import { api } from '../services/api';
 import Comment from './Comment';
 import ReactionButton from './ReactionButton';
 
 interface TweetProps {
+  id: number;
   retweetedBy?: string;
   profileImage: string;
   profileName: string;
@@ -20,6 +22,7 @@ interface TweetProps {
 }
 
 const Tweet: FC<TweetProps> = ({
+  id,
   retweetedBy,
   profileImage,
   profileName,
@@ -34,9 +37,20 @@ const Tweet: FC<TweetProps> = ({
   retweeted,
   saved,
 }) => {
+  const [comments, setComments] = useState([]);
+
+  async function getComments(): Promise<void> {
+    api
+      .get(`tweet/${id}/comments`)
+      .then(response => {
+        setComments(response.data);
+      })
+      .catch(err => console.log(err));
+  }
+
   return (
     <div>
-      {retweetedBy !== profileName && (
+      {retweetedBy && (
         <div className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
           <span className="material-icons text-md">loop</span>
           <h1 className="font-noto">{`${retweetedBy} retweeted`}</h1>
@@ -67,10 +81,29 @@ const Tweet: FC<TweetProps> = ({
           <hr />
         </div>
         <div className="flex text-sm justify-evenly">
-          <ReactionButton action="comment" />
-          <ReactionButton action="like" used={liked} />
-          <ReactionButton action="retweet" used={retweeted} />
-          <ReactionButton action="save" used={saved} />
+          <ReactionButton
+            action="comment"
+            id={id}
+            clickFunction={getComments}
+          />
+          <ReactionButton
+            action="like"
+            id={id}
+            used={liked}
+            clickFunction={getComments}
+          />
+          <ReactionButton
+            action="retweet"
+            id={id}
+            used={retweeted}
+            clickFunction={getComments}
+          />
+          <ReactionButton
+            action="save"
+            id={id}
+            used={saved}
+            clickFunction={getComments}
+          />
         </div>
         <hr />
         <div className="flex items-center space-x-2 h-9">
@@ -86,22 +119,18 @@ const Tweet: FC<TweetProps> = ({
         </div>
         <hr />
         <div className="pt-3 space-y-4">
-          <Comment
-            userImg="/profile6.jpg"
-            userName="Waqar Bloom"
-            date="24 August at 20:43"
-            content="I’ve seen awe-inspiring things that I thought I’d never be able to explain to another person."
-            liked
-            likesQty="12k"
-          />
-          <Comment
-            userImg="/profile3.jpg"
-            userName="Bianca Sosa"
-            date="23 August at 14:54"
-            content="I’ve felt this pull many times, like while road tripping through Morocco. Seeking out the vastness of the desert, and looking inward at the same time. More message just to test the 'read more'."
-            liked={false}
-            likesQty="8k"
-          />
+          {comments.map(comment => (
+            <Comment
+              key={comment.id}
+              id={comment.id}
+              userImg={comment.userImage}
+              userName={comment.userName}
+              date={format(parseISO(comment.createdAt), "dd LLLL 'at' hh:mm")}
+              content={comment.content}
+              isLiked={comment.isLiked}
+              likesQty={comment.likesQty}
+            />
+          ))}
         </div>
       </div>
     </div>

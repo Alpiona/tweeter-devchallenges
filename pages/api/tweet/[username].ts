@@ -2,7 +2,6 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
-import { Profile } from '.prisma/client';
 import prisma from '../../../lib/prisma';
 
 type TweetData = {
@@ -19,6 +18,7 @@ type TweetData = {
   isLiked: boolean;
   isRetweeted: boolean;
   isSaved: boolean;
+  retweetedBy: string;
 };
 
 export default async (
@@ -81,7 +81,7 @@ export default async (
     return isFollowing || tweet.isPublic;
   });
 
-  const tweetsFormated = tweets.map(tweet => {
+  const tweetsFormated: TweetData[] = tweets.map(tweet => {
     return {
       id: tweet.id,
       profileName: profile.name,
@@ -106,6 +106,7 @@ export default async (
           profileId: profileSession.id,
           tweetId: tweet.id,
         }),
+      retweetedBy: null,
     };
   });
 
@@ -135,6 +136,7 @@ export default async (
             profileId: profileSession.id,
             tweetId: tweet.id,
           }),
+        retweetedBy: profile.name,
       };
     }),
   );

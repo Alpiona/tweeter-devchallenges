@@ -1,23 +1,34 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import ReactionButton from './ReactionButton';
 
 interface CommentProps {
+  id: number;
   userImg: string;
   userName: string;
   date: string;
   content: string;
-  liked: boolean;
+  isLiked: boolean;
   likesQty: string;
 }
 
 const Comment: FC<CommentProps> = ({
+  id,
   userImg,
   userName,
   date,
   content,
-  liked,
+  isLiked,
   likesQty,
 }) => {
+  const [isLikedNew, setLike] = useState(isLiked);
+
+  async function changeIsLiked(): Promise<void> {
+    // TODO: Need to make API and complete
+    setLike(!isLikedNew);
+  }
+
+  console.log(userImg);
+
   return (
     <div className="flex items-start space-x-2 flex-grow">
       <img
@@ -34,7 +45,13 @@ const Comment: FC<CommentProps> = ({
           <h1 className="font-noto text-gray-700">{content}</h1>
         </div>
         <div className="flex items-center space-x-5">
-          <ReactionButton action="like" scale="90" used={liked} />
+          <ReactionButton
+            id={id}
+            action="like"
+            scale="90"
+            used={isLiked}
+            clickFunction={changeIsLiked}
+          />
           <h1 className="text-gray-400 font-medium text-sm">{`${likesQty} Likes`}</h1>
         </div>
       </div>

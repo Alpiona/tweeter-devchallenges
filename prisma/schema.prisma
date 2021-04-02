@@ -78,9 +78,10 @@ model Profile {
   following                               Follower[]     @relation("following")
   retweets                                 Tweet[]        @relation("retweet")
   tweets                                   Tweet[]
-  tweetComments                           TweetComment[]
-  tweetLikes                             TweetLiked[]
-  tweetSaves                             TweetSaved[]
+  comments                              Comment[]
+  comment_likes                         CommentLike[]
+  tweetLikes                             TweetLike[]
+  tweetSaves                             TweetSave[]
 
   @@map(name: "profile")
 }
@@ -114,16 +115,16 @@ model Tweet {
   deletedAt     DateTime?        @map(name: "deleted_at")
   profile       Profile         @relation(fields: [profileId], references: [id])
   retweets       Profile[]    @relation("retweet")
-  comments TweetComment[]   @relation("tweetComment")
+  comments Comment[]   @relation("comment")
   hashtags TweetHashtag[]
   images   TweetImage[]
-  likes   TweetLiked[]
-  saves   TweetSaved[]
+  likes   TweetLike[]
+  saves   TweetSave[]
 
   @@map(name: "tweet")
 }
 
-model TweetComment {
+model Comment {
   id          Int       @id @default(autoincrement())
   tweetId    Int        @map(name: "tweet_id")
   profileId  Int        @map(name: "profile_id")
@@ -133,7 +134,8 @@ model TweetComment {
   updatedAt   DateTime        @updatedAt @map(name: "updated_at")
   deletedAt   DateTime?        @map(name: "deleted_at")
   profile     Profile   @relation(fields: [profileId], references: [id])
-  tweet       Tweet     @relation("tweetComment", fields: [tweetId], references: [id])
+  tweet       Tweet     @relation("comment", fields: [tweetId], references: [id])
+  commentLikes CommentLike[]
 
   @@map(name: "tweet_comment")
 }
@@ -160,17 +162,27 @@ model TweetImage {
   @@map(name: "tweet_image")
 }
 
-model TweetLiked {
+model TweetLike {
   tweetId   Int        @map(name: "tweet_id")
   profileId Int        @map(name: "profile_id")
   profile    Profile   @relation(fields: [profileId], references: [id])
   tweet      Tweet     @relation(fields: [tweetId], references: [id])
 
   @@id([tweetId, profileId])
-  @@map(name: "tweet_liked")
+  @@map(name: "tweet_like")
 }
 
-model TweetSaved {
+model CommentLike {
+  commentId   Int        @map(name: "comment_id")
+  profileId Int        @map(name: "profile_id")
+  profile    Profile   @relation(fields: [profileId], references: [id])
+  comment      Comment     @relation(fields: [commentId], references: [id])
+
+  @@id([commentId, profileId])
+  @@map(name: "comment_like")
+}
+
+model TweetSave {
   tweetId   Int       @map(name: "tweet_id")
   profileId Int       @map(name: "profile_id")
   profile    Profile   @relation(fields: [profileId], references: [id])

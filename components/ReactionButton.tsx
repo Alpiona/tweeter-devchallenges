@@ -1,68 +1,74 @@
 import { FC } from 'react';
 
 interface ReactionButtonProps {
+  id: number;
+  clickFunction: () => void;
   action: 'comment' | 'retweet' | 'like' | 'save';
   used?: boolean;
   scale?: string;
 }
 
 const ReactionButton: FC<ReactionButtonProps> = ({
+  id,
+  clickFunction,
   action,
   used = false,
   scale,
 }) => {
-  const className = 'flex items-center font-medium justify-center space-x-2';
-  const transformScale = scale ? `transform scale-${scale}` : '';
-  let color = 'text-gray-600';
-  let icon = '';
-  let word = '';
+  const className = `flex items-center font-medium justify-center space-x-2 ${
+    scale && `transform scale-${scale}`
+  }`;
 
   switch (action) {
+    default:
     case 'comment':
-      icon = 'comment';
-      word = 'Comment';
-      break;
+      return (
+        <button
+          type="button"
+          className={`${className} text-gray-600`}
+          onClick={clickFunction}
+        >
+          <span className="material-icons-outlined">comment</span>
+          <h1>Comment</h1>
+        </button>
+      );
 
     case 'retweet':
-      icon = 'loop';
-      if (used) {
-        word = 'Retweeted';
-        color = 'text-green-500';
-      } else {
-        word = 'Retweet';
-      }
-      break;
+      return (
+        <button
+          type="button"
+          className={`${className} ${used && 'text-green-500'}`}
+          onClick={clickFunction}
+        >
+          <span className="material-icons-outlined">loop</span>
+          <h1>{used ? 'Retweeted' : 'Retweet'}</h1>
+        </button>
+      );
 
     case 'like':
-      icon = 'favorite_border';
-      if (used) {
-        word = 'Liked';
-        color = 'text-red-500';
-      } else {
-        word = 'Like';
-      }
-      break;
+      return (
+        <button
+          type="button"
+          className={`${className} ${used && 'text-red-500'}`}
+          onClick={clickFunction}
+        >
+          <span className="material-icons-outlined">favorite_border</span>
+          <h1>{used ? 'Liked' : 'Like'}</h1>
+        </button>
+      );
 
     case 'save':
-      icon = 'bookmark_border';
-      if (used) {
-        word = 'Saved';
-        color = 'text-blue-500';
-      } else {
-        word = 'Save';
-      }
-      break;
-
-    default:
-      break;
+      return (
+        <button
+          type="button"
+          className={`${className} ${used && 'text-blue-500'}`}
+          onClick={clickFunction}
+        >
+          <span className="material-icons-outlined">bookmark_border</span>
+          <h1>{used ? 'Saved' : 'Save'}</h1>
+        </button>
+      );
   }
-
-  return (
-    <button type="button" className={`${className} ${transformScale} ${color}`}>
-      <span className="material-icons-outlined">{icon}</span>
-      <h1>{word}</h1>
-    </button>
-  );
 };
 
 export default ReactionButton;

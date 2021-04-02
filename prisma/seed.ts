@@ -56,7 +56,7 @@ async function createComment(
   content: string,
   image: string = null,
 ): Promise<void> {
-  await prisma.tweetComment.create({
+  await prisma.comment.create({
     data: {
       tweetId,
       profileId,
@@ -195,7 +195,7 @@ async function addComments(
 
   await createComment(
     tweets[0].id,
-    profiles[1].id,
+    profiles[2].id,
     'Second comment of third user in the first user first tweet with image.',
     '/image4.jpg',
   );
