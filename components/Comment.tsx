@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { api } from '../services/api';
 import ReactionButton from './ReactionButton';
 
 interface CommentProps {
@@ -23,8 +24,12 @@ const Comment: FC<CommentProps> = ({
   const [isLiked, setLike] = useState(liked);
 
   async function changeLikeStatus(): Promise<void> {
-    // TODO: Need to make API and complete
-    setLike(!isLiked);
+    api
+      .patch(`tweet/comment/${id}/like`)
+      .then(response => {
+        setLike(response.data);
+      })
+      .catch(err => console.log(err));
   }
 
   return (

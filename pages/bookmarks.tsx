@@ -18,32 +18,38 @@ const Bookmarks: NextPage = () => {
         </div>
         <div className="w-1/2 space-y-6">
           <Tweet
-            retweetedBy=""
-            userImg="/profile6.jpg"
-            userName="Waqar Bloom"
-            date="15 August at 23:33"
-            content="“The gladdest moment in human life, methinks, is a departure into unknown lands.” – Sir Richard Burton"
-            img="/background4.jpg"
-            commentsQty="449"
-            retweetsQty="59k"
-            savedQty="234"
-            liked={false}
-            retweeted={false}
-            saved={false}
-          />
-          <Tweet
+            key={1}
+            id={1}
             retweetedBy="Daniel Something"
-            userImg="/profile2.jpg"
-            userName="Peter Jackson"
+            profileImage="/profile2.jpg"
+            profileName="Peter Jackson"
+            profileUsername="peter.jackson"
             date="23 August at 08:11"
             content='"We travel, some of us forever, to seek other places, other lives, other souls." - Anais Nin'
             img="/background.jpeg"
-            commentsQty="449"
-            retweetsQty="59k"
-            savedQty="234"
+            commentsQty={449}
+            retweetsQty={59}
+            savedQty={234}
             liked
             retweeted
             saved
+          />
+          <Tweet
+            key={2}
+            id={2}
+            retweetedBy=""
+            profileImage="/profile6.jpg"
+            profileName="Waqar Bloom"
+            profileUsername="wagar.bloom"
+            date="15 August at 23:33"
+            content="“The gladdest moment in human life, methinks, is a departure into unknown lands.” – Sir Richard Burton"
+            img="/background4.jpg"
+            commentsQty={449}
+            retweetsQty={59}
+            savedQty={234}
+            liked={false}
+            retweeted={false}
+            saved={false}
           />
         </div>
       </div>
