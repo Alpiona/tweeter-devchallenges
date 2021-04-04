@@ -47,9 +47,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       `profile/${(username as string).toLowerCase()}`,
     );
     if (response.status === 404) {
-      return {
-        redirect: { destination: '/' },
-      };
+      return { props, redirect: { destination: '/' } };
     }
     props = response.data;
   } catch (err) {
@@ -59,7 +57,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return { props };
 };
 
-const ProfilePage: NextPage = ({
+const ProfilePage: NextPage<ProfileData> = ({
   backgroundImage,
   description,
   followerQty,
@@ -68,9 +66,8 @@ const ProfilePage: NextPage = ({
   profileImage,
   username,
 }: ProfileData) => {
-  const [session] = useSession();
-  const [tweets, setTweets] = useState([]);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   useEffect(() => {
     api

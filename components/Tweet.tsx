@@ -1,9 +1,19 @@
 import { format, parseISO } from 'date-fns';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { api } from '../services/api';
 import Comment from './Comment';
 import ReactionButton from './ReactionButton';
 
+interface CommentProps {
+  id: number;
+  userImage: string;
+  userName: string;
+  createdAt: string;
+  updatedAt: string;
+  content: string;
+  likesQty: number;
+  isLiked: boolean;
+}
 interface TweetProps {
   id: number;
   retweetedBy?: string;
@@ -37,13 +47,43 @@ const Tweet: FC<TweetProps> = ({
   retweeted,
   saved,
 }) => {
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<CommentProps[]>([]);
+  const [isLiked, setLikeStatus] = useState<boolean>(liked);
+  const [isRetweeded, setRetweetStatus] = useState<boolean>(retweeted);
+  const [isSaved, setSaveStatus] = useState<boolean>(saved);
+
+  async function changeLikedStatus(): Promise<void> {
+    api
+      .patch(`tweet/${id}/like`)
+      .then(response => {
+        setLikeStatus(response.data);
+      })
+      .catch(err => console.log(err));
+  }
+
+  async function changeRetweetdStatus(): Promise<void> {
+    api
+      .patch(`tweet/${id}/retweet`)
+      .then(response => {
+        setRetweetStatus(response.data);
+      })
+      .catch(err => console.log(err));
+  }
+
+  async function changeSavedStatus(): Promise<void> {
+    api
+      .patch(`tweet/${id}/save`)
+      .then(response => {
+        setSaveStatus(response.data);
+      })
+      .catch(err => console.log(err));
+  }
 
   async function getComments(): Promise<void> {
     api
       .get(`tweet/${id}/comments`)
       .then(response => {
-        setComments(response.data);
+        setComments(response.data.comments);
       })
       .catch(err => console.log(err));
   }
@@ -89,20 +129,20 @@ const Tweet: FC<TweetProps> = ({
           <ReactionButton
             action="like"
             id={id}
-            used={liked}
-            clickFunction={getComments}
+            used={isLiked}
+            clickFunction={changeLikedStatus}
           />
           <ReactionButton
             action="retweet"
             id={id}
-            used={retweeted}
-            clickFunction={getComments}
+            used={isRetweeded}
+            clickFunction={changeRetweetdStatus}
           />
           <ReactionButton
             action="save"
             id={id}
-            used={saved}
-            clickFunction={getComments}
+            used={isSaved}
+            clickFunction={changeSavedStatus}
           />
         </div>
         <hr />
@@ -127,7 +167,7 @@ const Tweet: FC<TweetProps> = ({
               userName={comment.userName}
               date={format(parseISO(comment.createdAt), "dd LLLL 'at' hh:mm")}
               content={comment.content}
-              isLiked={comment.isLiked}
+              liked={comment.isLiked}
               likesQty={comment.likesQty}
             />
           ))}

@@ -67,10 +67,9 @@ export default async (
 
   if (
     !session ||
-    !profile.followers.includes({
-      followerId: profileSession.id,
-      followingId: profile.id,
-    })
+    !profile.followers.some(
+      follower => follower.followerId === profileSession.id,
+    )
   ) {
     isFollowing = false;
   } else {
@@ -94,18 +93,16 @@ export default async (
       retweetsQty: tweet.retweets.length,
       savesQty: tweet.saves.length,
       isLiked:
+        profileSession &&
+        tweet.likes.some(like => like.profileId === profileSession.id),
+      isRetweeted:
         session &&
-        tweet.likes.includes({
-          profileId: profileSession.id,
-          tweetId: tweet.id,
-        }),
-      isRetweeted: session && tweet.retweets.includes(profileSession),
+        tweet.retweets.some(
+          retweetProfile => retweetProfile.id === profileSession.id,
+        ),
       isSaved:
-        session &&
-        tweet.saves.includes({
-          profileId: profileSession.id,
-          tweetId: tweet.id,
-        }),
+        profileSession &&
+        tweet.saves.some(save => save.profileId === profileSession.id),
       retweetedBy: null,
     };
   });
@@ -124,18 +121,16 @@ export default async (
         retweetsQty: tweet.retweets.length,
         savesQty: tweet.saves.length,
         isLiked:
-          session &&
-          tweet.likes.includes({
-            profileId: profileSession.id,
-            tweetId: tweet.id,
-          }),
-        isRetweeted: session && tweet.retweets.includes(profileSession),
+          profileSession &&
+          tweet.likes.some(like => like.profileId === profileSession.id),
+        isRetweeted:
+          profileSession &&
+          tweet.retweets.some(
+            retweetProfile => retweetProfile.id === profileSession.id,
+          ),
         isSaved:
-          session &&
-          tweet.saves.includes({
-            profileId: profileSession.id,
-            tweetId: tweet.id,
-          }),
+          profileSession &&
+          tweet.saves.some(save => save.profileId === profileSession.id),
         retweetedBy: profile.name,
       };
     }),

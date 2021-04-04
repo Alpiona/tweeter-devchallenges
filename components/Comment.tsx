@@ -7,8 +7,8 @@ interface CommentProps {
   userName: string;
   date: string;
   content: string;
-  isLiked: boolean;
-  likesQty: string;
+  liked: boolean;
+  likesQty: number;
 }
 
 const Comment: FC<CommentProps> = ({
@@ -17,17 +17,15 @@ const Comment: FC<CommentProps> = ({
   userName,
   date,
   content,
-  isLiked,
+  liked,
   likesQty,
 }) => {
-  const [isLikedNew, setLike] = useState(isLiked);
+  const [isLiked, setLike] = useState(liked);
 
-  async function changeIsLiked(): Promise<void> {
+  async function changeLikeStatus(): Promise<void> {
     // TODO: Need to make API and complete
-    setLike(!isLikedNew);
+    setLike(!isLiked);
   }
-
-  console.log(userImg);
 
   return (
     <div className="flex items-start space-x-2 flex-grow">
@@ -50,7 +48,7 @@ const Comment: FC<CommentProps> = ({
             action="like"
             scale="90"
             used={isLiked}
-            clickFunction={changeIsLiked}
+            clickFunction={changeLikeStatus}
           />
           <h1 className="text-gray-400 font-medium text-sm">{`${likesQty} Likes`}</h1>
         </div>
