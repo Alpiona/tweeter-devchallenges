@@ -7,6 +7,7 @@ import Tweet from '../components/Tweet';
 import SideFilterMenu from '../components/SideFilterMenu';
 import ProfileHeader from '../components/ProfileHeader';
 import { api } from '../services/api';
+import { TweetsFilterEnum } from '../constants/TweetsFilterEnum';
 
 type TweetData = {
   id: number;
@@ -97,7 +98,7 @@ const ProfilePage: NextPage<ProfileData> = ({
           />
           <div className="flex space-x-6">
             <div className="w-1/5">
-              <SideFilterMenu option="1" />
+              <SideFilterMenu option={TweetsFilterEnum.TWEETS} />
             </div>
             <div className="w-4/5 space-y-6">
               {tweets.map(tweet => (
