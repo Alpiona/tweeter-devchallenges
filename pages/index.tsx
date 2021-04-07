@@ -41,11 +41,15 @@ type TweetData = {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session = await getSession({ req });
 
-  const apiResponse = await api.get(
-    `profile/${session.user.name.toLowerCase()}`,
-  );
+  let profile: PropsData;
 
-  const profile = apiResponse.data;
+  if (session) {
+    const apiResponse = await api.get(
+      `profile/${session.user.name.toLowerCase()}`,
+    );
+
+    profile = apiResponse.data;
+  }
 
   return { props: { profile } };
 };

@@ -23,7 +23,7 @@ const Comment: FC<CommentProps> = ({
 }) => {
   const [isLiked, setLike] = useState(liked);
 
-  async function changeLikeStatus(): Promise<void> {
+  async function handleLike(): Promise<void> {
     api
       .patch(`tweet/comment/${id}/like`)
       .then(response => {
@@ -53,7 +53,7 @@ const Comment: FC<CommentProps> = ({
             action="like"
             scale="90"
             used={isLiked}
-            clickFunction={changeLikeStatus}
+            onClick={handleLike}
           />
           <h1 className="text-gray-400 font-medium text-sm">{`${likesQty} Likes`}</h1>
         </div>

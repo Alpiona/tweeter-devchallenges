@@ -1,23 +1,44 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { api } from '../services/api';
 import FollowButton from './FollowButton';
 
 interface ProfileHeaderProps {
   image: string;
   name: string;
+  username: string;
   followingQty: number;
   followersQty: number;
   description: string;
-  isFollowing: boolean;
 }
 
 const ProfileHeader: FC<ProfileHeaderProps> = ({
   image,
   name,
+  username,
   followingQty,
   followersQty,
   description,
-  isFollowing,
 }) => {
+  const [isFollowing, setIsFollowing] = useState<boolean>();
+
+  async function handleFollowUpdate(): Promise<void> {
+    api
+      .patch(`profile/${username}/follow`)
+      .then(response => {
+        setIsFollowing(response.data.isFollowing);
+      })
+      .catch(err => console.log(err));
+  }
+
+  useEffect(() => {
+    api
+      .get(`profile/${username}/follow`)
+      .then(response => {
+        setIsFollowing(response.data.isFollowing);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
   return (
     <div className="flex bg-white mt-56 rounded-xl z-10 relative">
       <div className="w-auto">
@@ -40,7 +61,12 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
               <div className="font-medium text-gray-500">Followers</div>
             </div>
           </div>
-          <FollowButton isFollowing={isFollowing} />
+          {isFollowing != null && (
+            <FollowButton
+              isFollowing={isFollowing}
+              onFollow={handleFollowUpdate}
+            />
+          )}
         </div>
         <div className="text-semibold text-lg h-24 w-4/5 text-gray-500">
           {description}

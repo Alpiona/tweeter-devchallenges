@@ -1,11 +1,11 @@
 import { User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth, { InitOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import Adapters from 'next-auth/adapters';
 import Providers from 'next-auth/providers';
 import prisma from '../../../lib/prisma';
 
-const options: InitOptions = {
+const options: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     Providers.GitHub({
@@ -56,5 +56,7 @@ const options: InitOptions = {
   },
 };
 
-export default (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
-  NextAuth(req, res, options);
+export default (
+  req: NextApiRequest,
+  res: NextApiResponse,
+): void | Promise<void> => NextAuth(req, res, options);

@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 interface ReactionButtonProps {
   id: number;
-  clickFunction: () => void;
+  onClick: () => void;
   action: 'comment' | 'retweet' | 'like' | 'save';
   used?: boolean;
   scale?: string;
@@ -10,7 +10,7 @@ interface ReactionButtonProps {
 
 const ReactionButton: FC<ReactionButtonProps> = ({
   id,
-  clickFunction,
+  onClick: handleClick,
   action,
   used = false,
   scale,
@@ -26,7 +26,7 @@ const ReactionButton: FC<ReactionButtonProps> = ({
         <button
           type="button"
           className={`${className} text-gray-600`}
-          onClick={clickFunction}
+          onClick={handleClick}
         >
           <span className="material-icons-outlined">comment</span>
           <h1>Comment</h1>
@@ -38,7 +38,7 @@ const ReactionButton: FC<ReactionButtonProps> = ({
         <button
           type="button"
           className={`${className} ${used && 'text-green-500'}`}
-          onClick={clickFunction}
+          onClick={handleClick}
         >
           <span className="material-icons-outlined">loop</span>
           <h1>{used ? 'Retweeted' : 'Retweet'}</h1>
@@ -50,7 +50,7 @@ const ReactionButton: FC<ReactionButtonProps> = ({
         <button
           type="button"
           className={`${className} ${used && 'text-red-500'}`}
-          onClick={clickFunction}
+          onClick={handleClick}
         >
           <span className="material-icons-outlined">favorite_border</span>
           <h1>{used ? 'Liked' : 'Like'}</h1>
@@ -62,7 +62,7 @@ const ReactionButton: FC<ReactionButtonProps> = ({
         <button
           type="button"
           className={`${className} ${used && 'text-blue-500'}`}
-          onClick={clickFunction}
+          onClick={handleClick}
         >
           <span className="material-icons-outlined">bookmark_border</span>
           <h1>{used ? 'Saved' : 'Save'}</h1>

@@ -48,6 +48,7 @@ export default async (
         comments: true,
         retweets: true,
         saves: true,
+        likes: true,
       },
     });
   } else {
@@ -60,6 +61,7 @@ export default async (
         comments: true,
         retweets: true,
         saves: true,
+        likes: true,
       },
     });
   }

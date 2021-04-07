@@ -68,14 +68,12 @@ const ProfilePage: NextPage<ProfileData> = ({
   username,
 }: ProfileData) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   useEffect(() => {
     api
-      .get(`tweet/${(username as string).toLowerCase()}`)
+      .get(`tweet/${username}`)
       .then(response => {
         setTweets(response.data.tweets);
-        setIsFollowing(response.data.isFollowing);
       })
       .catch(err => console.log(err));
   }, []);
@@ -91,10 +89,10 @@ const ProfilePage: NextPage<ProfileData> = ({
           <ProfileHeader
             image={profileImage}
             name={name}
+            username={username}
             followingQty={followingQty}
             followersQty={followerQty}
             description={description}
-            isFollowing={isFollowing}
           />
           <div className="flex space-x-6">
             <div className="w-1/5">

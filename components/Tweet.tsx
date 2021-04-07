@@ -52,7 +52,7 @@ const Tweet: FC<TweetProps> = ({
   const [isRetweeded, setRetweetStatus] = useState<boolean>(retweeted);
   const [isSaved, setSaveStatus] = useState<boolean>(saved);
 
-  async function changeLikedStatus(): Promise<void> {
+  async function handleLikeUpdate(): Promise<void> {
     api
       .patch(`tweet/${id}/like`)
       .then(response => {
@@ -61,7 +61,7 @@ const Tweet: FC<TweetProps> = ({
       .catch(err => console.log(err));
   }
 
-  async function changeRetweetdStatus(): Promise<void> {
+  async function handleRetweetUpdate(): Promise<void> {
     api
       .patch(`tweet/${id}/retweet`)
       .then(response => {
@@ -70,7 +70,7 @@ const Tweet: FC<TweetProps> = ({
       .catch(err => console.log(err));
   }
 
-  async function changeSavedStatus(): Promise<void> {
+  async function handleSaveUpdate(): Promise<void> {
     api
       .patch(`tweet/${id}/save`)
       .then(response => {
@@ -79,7 +79,7 @@ const Tweet: FC<TweetProps> = ({
       .catch(err => console.log(err));
   }
 
-  async function getComments(): Promise<void> {
+  async function handleCommentsList(): Promise<void> {
     api
       .get(`tweet/${id}/comments`)
       .then(response => {
@@ -124,25 +124,25 @@ const Tweet: FC<TweetProps> = ({
           <ReactionButton
             action="comment"
             id={id}
-            clickFunction={getComments}
+            onClick={handleCommentsList}
           />
           <ReactionButton
             action="like"
             id={id}
             used={isLiked}
-            clickFunction={changeLikedStatus}
+            onClick={handleLikeUpdate}
           />
           <ReactionButton
             action="retweet"
             id={id}
             used={isRetweeded}
-            clickFunction={changeRetweetdStatus}
+            onClick={handleRetweetUpdate}
           />
           <ReactionButton
             action="save"
             id={id}
             used={isSaved}
-            clickFunction={changeSavedStatus}
+            onClick={handleSaveUpdate}
           />
         </div>
         <hr />
