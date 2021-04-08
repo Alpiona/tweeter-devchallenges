@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { NextComponentType } from 'next';
-import { signIn, signOut, useSession } from 'next-auth/client';
+import { signIn, useSession } from 'next-auth/client';
 
 const Header: NextComponentType = () => {
   const [session, loading] = useSession();

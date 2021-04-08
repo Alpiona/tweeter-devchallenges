@@ -68,15 +68,22 @@ const ProfilePage: NextPage<ProfileData> = ({
   username,
 }: ProfileData) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [tweetsFilter, setTweetsFilter] = useState<TweetsFilterEnum>(
+    TweetsFilterEnum.TWEETS,
+  );
+
+  function handleTweetsFilter(filter: TweetsFilterEnum): void {
+    setTweetsFilter(filter);
+  }
 
   useEffect(() => {
     api
-      .get(`tweet/${username}`)
+      .get(`tweet/${username}`, { params: { filter: tweetsFilter } })
       .then(response => {
         setTweets(response.data.tweets);
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [tweetsFilter]);
 
   return (
     <Layout>
@@ -96,7 +103,10 @@ const ProfilePage: NextPage<ProfileData> = ({
           />
           <div className="flex space-x-6">
             <div className="w-1/5">
-              <SideFilterMenu option={TweetsFilterEnum.TWEETS} />
+              <SideFilterMenu
+                option={tweetsFilter}
+                onFilterClick={handleTweetsFilter}
+              />
             </div>
             <div className="w-4/5 space-y-6">
               {tweets.map(tweet => (

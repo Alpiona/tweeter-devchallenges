@@ -44,7 +44,7 @@ const options: NextAuthOptions = {
       if (exist == null) {
         await prisma.profile.create({
           data: {
-            username: user.name.toLowerCase(),
+            username: metadata.login.toLowerCase(),
             name: user.name,
             email: user.email,
             profileImage: user.image,
@@ -52,6 +52,7 @@ const options: NextAuthOptions = {
           },
         });
       }
+      user.name = metadata.login;
     },
   },
 };

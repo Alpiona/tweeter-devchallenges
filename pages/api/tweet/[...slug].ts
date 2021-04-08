@@ -8,10 +8,10 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> => {
-  const id = parseInt(req.query.slug[0], 10);
+  const tweetId = parseInt(req.query.slug[0], 10);
   const type = req.query.slug[1];
 
-  if (!_.isNumber(id)) {
+  if (!_.isNumber(tweetId)) {
     res.status(404);
     return;
   }
@@ -30,7 +30,10 @@ export default async (
     case 'GET':
       switch (type) {
         case 'comments': {
-          const { status, content } = await getComments(id, profileSession);
+          const { status, content } = await getComments(
+            tweetId,
+            profileSession,
+          );
           res.status(status).json(content);
           break;
         }
@@ -44,7 +47,7 @@ export default async (
       switch (type) {
         case 'like': {
           const { status, content } = await updateLikeStatus(
-            id,
+            tweetId,
             profileSession,
           );
           res.status(status).json(content);
@@ -53,7 +56,7 @@ export default async (
 
         case 'retweet': {
           const { status, content } = await updateRetweetStatus(
-            id,
+            tweetId,
             profileSession,
           );
           res.status(status).json(content);
@@ -62,7 +65,7 @@ export default async (
 
         case 'save': {
           const { status, content } = await updateSaveStatus(
-            id,
+            tweetId,
             profileSession,
           );
           res.status(status).json(content);
