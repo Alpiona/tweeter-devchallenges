@@ -203,7 +203,7 @@ async function updateRetweetStatus(
           followers: true,
         },
       },
-      retweets: true,
+      retweeters: true,
     },
   });
 
@@ -216,7 +216,7 @@ async function updateRetweetStatus(
     return { status: 404, content: null };
   }
 
-  const isRetweeted = tweet.retweets.some(
+  const isRetweeted = tweet.retweeters.some(
     profile => profile.id === profileSession.id,
   );
 
@@ -226,7 +226,7 @@ async function updateRetweetStatus(
         id: tweet.id,
       },
       data: {
-        retweets: {
+        retweeters: {
           disconnect: {
             id: profileSession.id,
           },
@@ -241,7 +241,7 @@ async function updateRetweetStatus(
       id: tweet.id,
     },
     data: {
-      retweets: {
+      retweeters: {
         connect: {
           id: profileSession.id,
         },

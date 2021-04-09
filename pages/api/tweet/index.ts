@@ -46,7 +46,7 @@ export default async (
       include: {
         profile: true,
         comments: true,
-        retweets: true,
+        retweeters: true,
         saves: true,
         likes: true,
       },
@@ -59,7 +59,7 @@ export default async (
       include: {
         profile: true,
         comments: true,
-        retweets: true,
+        retweeters: true,
         saves: true,
         likes: true,
       },
