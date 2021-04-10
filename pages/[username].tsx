@@ -1,5 +1,4 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { useSession } from 'next-auth/client';
 import { format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
