@@ -30,7 +30,7 @@ export default async (
   });
 
   if (!profile) {
-    res.status(404);
+    res.status(404).end();
     return;
   }
 

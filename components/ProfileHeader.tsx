@@ -1,5 +1,5 @@
+import axios from 'axios';
 import { FC, useEffect, useState } from 'react';
-import { api } from '../services/api';
 import FollowButton from './FollowButton';
 
 interface ProfileHeaderProps {
@@ -22,8 +22,8 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
   const [isFollowing, setIsFollowing] = useState<boolean>();
 
   async function handleFollowUpdate(): Promise<void> {
-    api
-      .patch(`profile/${username}/follow`)
+    axios
+      .patch(`/api/profile/${username}/follow`)
       .then(response => {
         setIsFollowing(response.data.isFollowing);
       })
@@ -31,8 +31,8 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
   }
 
   useEffect(() => {
-    api
-      .get(`profile/${username}/follow`)
+    axios
+      .get(`/api/profile/${username}/follow`)
       .then(response => {
         setIsFollowing(response.data.isFollowing);
       })

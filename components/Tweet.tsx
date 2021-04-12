@@ -1,6 +1,6 @@
+import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 import { FC, useState } from 'react';
-import { api } from '../services/api';
 import Comment from './Comment';
 import ReactionButton from './ReactionButton';
 
@@ -53,8 +53,8 @@ const Tweet: FC<TweetProps> = ({
   const [isSaved, setSaveStatus] = useState<boolean>(saved);
 
   async function handleLikeUpdate(): Promise<void> {
-    api
-      .patch(`tweet/${id}/like`)
+    axios
+      .patch(`/api/tweet/${id}/like`)
       .then(response => {
         setLikeStatus(response.data);
       })
@@ -62,8 +62,8 @@ const Tweet: FC<TweetProps> = ({
   }
 
   async function handleRetweetUpdate(): Promise<void> {
-    api
-      .patch(`tweet/${id}/retweet`)
+    axios
+      .patch(`/api/tweet/${id}/retweet`)
       .then(response => {
         setRetweetStatus(response.data);
       })
@@ -71,8 +71,8 @@ const Tweet: FC<TweetProps> = ({
   }
 
   async function handleSaveUpdate(): Promise<void> {
-    api
-      .patch(`tweet/${id}/save`)
+    axios
+      .patch(`/api/tweet/${id}/save`)
       .then(response => {
         setSaveStatus(response.data);
       })
@@ -80,8 +80,8 @@ const Tweet: FC<TweetProps> = ({
   }
 
   async function handleCommentsList(): Promise<void> {
-    api
-      .get(`tweet/${id}/comments`)
+    axios
+      .get(`/api/tweet/${id}/comments`)
       .then(response => {
         setComments(response.data.comments);
       })

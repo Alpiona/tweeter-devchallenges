@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
 import { getSession, useSession } from 'next-auth/client';
@@ -7,7 +8,6 @@ import Layout from '../components/Layout';
 import TrendsList from '../components/TrendsList';
 import Tweet from '../components/Tweet';
 import TweetSomething from '../components/TweetSomething';
-import { api } from '../services/api';
 
 type PropsData = {
   profile: {
@@ -44,8 +44,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   let profile: PropsData;
 
   if (session) {
-    const apiResponse = await api.get(
-      `profile/${session.user.name.toLowerCase()}`,
+    const apiResponse = await axios.get(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL
+      }/api/profile/${session.user.name.toLowerCase()}`,
     );
 
     profile = apiResponse.data;
@@ -59,8 +61,8 @@ const Home: NextPage<PropsData> = ({ profile }: PropsData) => {
   const [session] = useSession();
 
   useEffect(() => {
-    api
-      .get(`tweet`)
+    axios
+      .get(`/api/tweet`)
       .then(response => {
         setTweets(response.data.tweets);
       })

@@ -1,11 +1,16 @@
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next';
 import { format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
 import SideFilterMenu from '../components/SideFilterMenu';
 import ProfileHeader from '../components/ProfileHeader';
-import { api } from '../services/api';
 import { TweetsFilterEnum } from '../constants/TweetsFilterEnum';
 
 type TweetData = {
@@ -43,21 +48,23 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { username } = params;
   let props = {};
   try {
-    const response = await api.get(
-      `profile/${(username as string).toLowerCase()}`,
+    const response = await axios.get(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL
+      }/api/profile/${(username as string).toLowerCase()}`,
     );
-    if (response.status === 404) {
-      return { props, redirect: { destination: '/' } };
-    }
     props = response.data;
   } catch (err) {
-    console.log(err);
+    if (err.response.status === 404) {
+      return { notFound: true };
+    }
+    console.log(err.toJSON());
   }
 
   return { props };
 };
 
-const ProfilePage: NextPage<ProfileData> = ({
+const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   backgroundImage,
   description,
   followerQty,
@@ -76,12 +83,12 @@ const ProfilePage: NextPage<ProfileData> = ({
   }
 
   useEffect(() => {
-    api
-      .get(`tweet/${username}`, { params: { filter: tweetsFilter } })
+    axios
+      .get(`/api/tweet/${username}`, { params: { filter: tweetsFilter } })
       .then(response => {
         setTweets(response.data.tweets);
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err.toJSON()));
   }, [tweetsFilter]);
 
   return (

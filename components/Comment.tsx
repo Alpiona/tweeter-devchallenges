@@ -1,5 +1,5 @@
+import axios from 'axios';
 import { FC, useState } from 'react';
-import { api } from '../services/api';
 import ReactionButton from './ReactionButton';
 
 interface CommentProps {
@@ -24,8 +24,8 @@ const Comment: FC<CommentProps> = ({
   const [isLiked, setLike] = useState(liked);
 
   async function handleLike(): Promise<void> {
-    api
-      .patch(`tweet/comment/${id}/like`)
+    axios
+      .patch(`/api/tweet/comment/${id}/like`)
       .then(response => {
         setLike(response.data);
       })

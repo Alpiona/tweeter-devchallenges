@@ -3,23 +3,13 @@ import { getSession } from 'next-auth/client';
 import { Profile } from '.prisma/client';
 import prisma from '../../../lib/prisma';
 
-type ProfileData = {
-  name: string;
-  username: string;
-  profileImage: string;
-  description?: string;
-  backgroundImage?: string;
-  followingQty: number;
-  followerQty: number;
-};
-
 export default async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> => {
   const session = await getSession({ req });
 
-  let profileSession: Profile;
+  let profileSession: Pick<Profile, 'id'> = { id: 0 };
 
   if (session) {
     profileSession = await prisma.profile.findUnique({
@@ -30,7 +20,7 @@ export default async (
 
   let tweets = [];
 
-  if (profileSession != null) {
+  if (profileSession.id !== 0) {
     const followers = await prisma.follower.findMany({
       where: { followerId: profileSession.id },
     });
@@ -76,14 +66,14 @@ export default async (
       createdAt: tweet.createdAt,
       content: tweet.content,
       commentsQty: tweet.comments.length,
-      retweetsQty: tweet.retweets.length,
+      retweetsQty: tweet.retweeters.length,
       savesQty: tweet.saves.length,
       isLiked:
         profileSession &&
         tweet.likes.some(like => like.profileId === profileSession.id),
       isRetweeted:
         profileSession &&
-        tweet.retweets.some(
+        tweet.retweeters.some(
           retweetProfile => retweetProfile.id === profileSession.id,
         ),
       isSaved:

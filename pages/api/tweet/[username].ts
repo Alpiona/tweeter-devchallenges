@@ -30,11 +30,6 @@ export default async (
   const username = req.query.username as string;
   const filter = parseInt(req.query.filter as string, 10);
 
-  if (!filter) {
-    res.status(404);
-    return;
-  }
-
   const profile = await prisma.profile.findUnique({
     where: {
       username,
@@ -45,13 +40,13 @@ export default async (
   });
 
   if (!profile) {
-    res.status(404);
+    res.status(404).end();
     return;
   }
 
   const session = await getSession({ req });
 
-  let profileSession: any;
+  let profileSession: any = { id: 0 };
   if (session) {
     profileSession = await prisma.profile.findUnique({
       where: { username: session.user.name.toLowerCase() },
@@ -62,6 +57,7 @@ export default async (
 
   switch (filter) {
     case TweetsFilterEnum.TWEETS:
+    default:
       tweets = await getTweets(profile, profileSession);
       break;
 
@@ -76,8 +72,6 @@ export default async (
     case TweetsFilterEnum.LIKES:
       tweets = await getTweetsWithLike(profile, profileSession);
       break;
-
-    default:
   }
 
   const tweetsFormated: TweetData[] = tweets.map(tweet => {
