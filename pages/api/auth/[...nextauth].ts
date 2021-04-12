@@ -15,46 +15,46 @@ const options: NextAuthOptions = {
     // ...add more providers here
   ],
   adapter: Adapters.Prisma.Adapter({ prisma }),
-  callbacks: {
-    signIn: async (
-      user: User,
-      account: any,
-      metadata: any,
-    ): Promise<boolean> => {
-      // console.log(user, 'is the profile');
-      // console.log(account, 'is the account');
-      // console.log(metadata, 'is the metadata');
-      const res = await fetch('https://api.github.com/user/emails', {
-        headers: {
-          Authorization: `token ${account.accessToken}`,
-        },
-      });
-      const emails = await res.json();
-      if (!emails || emails.length === 0) {
-        return;
-      }
-      const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
-      // eslint-disable-next-line
-      user.email = sortedEmails[0].email;
+  // callbacks: {
+  //   signIn: async (
+  //     user: User,
+  //     account: any,
+  //     metadata: any,
+  //   ): Promise<boolean> => {
+  //     // console.log(user, 'is the profile');
+  //     // console.log(account, 'is the account');
+  //     // console.log(metadata, 'is the metadata');
+  //     const res = await fetch('https://api.github.com/user/emails', {
+  //       headers: {
+  //         Authorization: `token ${account.accessToken}`,
+  //       },
+  //     });
+  //     const emails = await res.json();
+  //     if (!emails || emails.length === 0) {
+  //       return;
+  //     }
+  //     const sortedEmails = emails.sort((a, b) => b.primary - a.primary);
+  //     // eslint-disable-next-line
+  //     user.email = sortedEmails[0].email;
 
-      const exist = await prisma.profile.findUnique({
-        where: { email: user.email },
-      });
+  //     const exist = await prisma.profile.findUnique({
+  //       where: { email: user.email },
+  //     });
 
-      if (exist == null) {
-        await prisma.profile.create({
-          data: {
-            username: metadata.login.toLowerCase(),
-            name: user.name,
-            email: user.email,
-            profileImage: user.image,
-            description: metadata.bio,
-          },
-        });
-      }
-      user.name = metadata.login;
-    },
-  },
+  //     if (exist == null) {
+  //       await prisma.profile.create({
+  //         data: {
+  //           username: metadata.login.toLowerCase(),
+  //           name: user.name,
+  //           email: user.email,
+  //           profileImage: user.image,
+  //           description: metadata.bio,
+  //         },
+  //       });
+  //     }
+  //     user.name = metadata.login;
+  //   },
+  // },
 };
 
 export default (
