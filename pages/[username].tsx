@@ -74,7 +74,6 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   username,
 }: ProfileProps) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
-  const [isFollowing, setIsFollowing] = useState<boolean>(null);
   const [tweetsFilter, setTweetsFilter] = useState<TweetsFilterEnum>(
     TweetsFilterEnum.TWEETS,
   );

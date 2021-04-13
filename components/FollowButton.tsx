@@ -2,11 +2,10 @@ import axios from 'axios';
 import { FC, useEffect, useState } from 'react';
 
 interface FollowButtonProps {
-  followingStatus?: boolean;
   username: string;
 }
 
-const FollowButton: FC<FollowButtonProps> = ({ followingStatus, username }) => {
+const FollowButton: FC<FollowButtonProps> = ({ username }) => {
   const [isFollowing, setIsFollowing] = useState<boolean>(null);
 
   function handleFollowUpdate(): void {

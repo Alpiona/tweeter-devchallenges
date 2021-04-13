@@ -1,35 +1,77 @@
-import { FC } from 'react';
+import axios from 'axios';
+import { FC, FormEvent, useState } from 'react';
 
 interface TweetSomethingProps {
   userImg: string;
 }
 
 const TweetSomething: FC<TweetSomethingProps> = ({ userImg }) => {
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+
+  function handlePublicOption(): void {
+    setIsPublic(!isPublic);
+  }
+
+  const handleSubmitTweet = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    axios
+      .post(
+        `/api/tweet`,
+        { isPublic, content: event.target[0].value },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+      .catch(err => console.log(err.toJSON()));
+
+    window.location.reload();
+  };
+
   return (
     <div className="px-5 pt-4 pb-3 bg-white rounded-lg space-y-2">
       <h1 className="font-semibold text-xs">Tweet something</h1>
       <hr className="pb-2 mt-2" />
       <div className="flex space-x-3">
         <img src={userImg} alt="" className="h-9 w-9 object-cover rounded-lg" />
-        <div className="flex-grow font-medium">
-          <h1 className="h-16 text-gray-400">Whats happening?</h1>
+        <form className="flex-grow font-medium" onSubmit={handleSubmitTweet}>
+          <textarea
+            name="content"
+            rows={3}
+            placeholder="Whats happening?"
+            className="w-full text-gray-600"
+            required
+          />
           <div className="flex justify-between">
-            <div className="flex items-center space-x-2 text-blue-500">
-              <span className="material-icons-outlined">insert_photo</span>
+            <div className="flex space-x-2 text-blue-500">
+              <button type="button" className="flex items-center">
+                <span className="material-icons-outlined">insert_photo</span>
+              </button>
 
-              <span className="material-icons-outlined">public</span>
-
-              <div className="text-sm">Everyone can reply</div>
+              <button
+                type="button"
+                className="flex items-center text-sm font-semibold"
+                onClick={handlePublicOption}
+              >
+                {isPublic ? (
+                  <>
+                    <span className="material-icons-outlined pr-1">public</span>
+                    Everyone can see
+                  </>
+                ) : (
+                  <>
+                    <span className="material-icons pr-1">people</span>
+                    Only who follows
+                  </>
+                )}
+              </button>
             </div>
 
             <button
+              type="submit"
               className="h-8 w-20 bg-blue-500 text-white rounded-md text-sm font-medium"
-              type="button"
             >
               Tweet
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

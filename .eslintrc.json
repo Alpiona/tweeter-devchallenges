@@ -26,6 +26,7 @@
         "prettier"
     ],
     "rules": {
+      "no-case-declarations": "warn",
       "no-use-before-define": "off",
       "no-param-reassign": "warn",
       "no-shadow": "off",
