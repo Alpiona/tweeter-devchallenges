@@ -18,7 +18,6 @@ interface ProfileHeaderProps {
   followingQty: number;
   followersQty: number;
   description: string;
-  isFollowing?: boolean;
 }
 
 const ProfileHeader: FC<ProfileHeaderProps> = ({
@@ -28,7 +27,6 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
   followingQty,
   followersQty,
   description,
-  isFollowing,
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>();
@@ -105,7 +103,10 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
                       <div className="flex flex-col">
                         {modalList &&
                           modalList.map(profile => (
-                            <div className="py-6 border-t border-solid border-blueGray-200">
+                            <div
+                              key={profile.username}
+                              className="py-6 border-t border-solid border-blueGray-200"
+                            >
                               <div className="flex items-center">
                                 <img
                                   src={profile.image}
@@ -119,10 +120,7 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
                                   <h1 className="font-normal text-sm text-gray-500">{`${profile.followersQty} followers`}</h1>
                                 </div>
                                 <div className="ml-auto">
-                                  <FollowButton
-                                    followingStatus={profile.isFollowing}
-                                    username={profile.username}
-                                  />
+                                  <FollowButton username={profile.username} />
                                 </div>
                               </div>
                               <div className="pt-4 text-semibold text-gray-500">
@@ -138,7 +136,7 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
               </>
             ) : null}
           </div>
-          <FollowButton followingStatus={isFollowing} username={username} />
+          <FollowButton username={username} />
         </div>
         <div className="text-semibold text-lg h-24 w-4/5 text-gray-500">
           {description}

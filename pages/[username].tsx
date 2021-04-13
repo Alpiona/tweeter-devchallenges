@@ -38,7 +38,6 @@ interface ProfileProps {
   backgroundImage: string;
   followingQty: number;
   followerQty: number;
-  isFollowing?: boolean;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -73,9 +72,9 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   name,
   profileImage,
   username,
-  isFollowing,
 }: ProfileProps) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [isFollowing, setIsFollowing] = useState<boolean>(null);
   const [tweetsFilter, setTweetsFilter] = useState<TweetsFilterEnum>(
     TweetsFilterEnum.TWEETS,
   );
@@ -108,7 +107,6 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
             followingQty={followingQty}
             followersQty={followerQty}
             description={description}
-            isFollowing={isFollowing}
           />
           <div className="flex space-x-6">
             <div className="w-1/5">
