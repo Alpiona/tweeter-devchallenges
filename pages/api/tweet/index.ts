@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
+import _ from 'lodash';
 import { Profile } from '.prisma/client';
 import prisma from '../../../lib/prisma';
 
@@ -25,29 +26,20 @@ export default async (
   res: NextApiResponse,
 ): Promise<void> => {
   const session = await getSession({ req });
-
-  let profileSession: any = { id: 0 };
-
-  if (session) {
-    profileSession = await prisma.profile.findUnique({
-      where: { username: session.user.name.toLowerCase() },
-      include: { followers: true, following: true },
-    });
-  }
+  const sessionUsername = session && session.user.name.toLowerCase();
 
   switch (req.method) {
     case 'POST':
-      if (profileSession.id === 0) {
-        res.status(404).end();
-        return;
-      }
-
       const { isPublic, content } = req.body;
+
       const newTweet = await prisma.tweet.create({
         data: {
           content,
           isPublic,
-          profileId: profileSession.id,
+          profile: { connect: { username: sessionUsername } },
+        },
+        include: {
+          profile: true,
         },
       });
 
@@ -56,9 +48,9 @@ export default async (
         commentsQty: 0,
         content: newTweet.content,
         createdAt: newTweet.createdAt,
-        profileImage: profileSession.profileImage,
-        profileName: profileSession.name,
-        profileUsername: profileSession.username,
+        profileImage: newTweet.profile.profileImage,
+        profileName: newTweet.profile.name,
+        profileUsername: newTweet.profile.username,
         retweetedBy: null,
         retweetsQty: 0,
         savesQty: 0,
@@ -73,10 +65,9 @@ export default async (
 
     case 'GET':
     default:
-      // eslint-disable-next-line
-      let tweets = [];
-      if (profileSession.id !== 0) {
-        tweets = await getProfileTweets(profileSession);
+      let tweets: TweetData[] = [];
+      if (!_.isNull(sessionUsername)) {
+        tweets = await getProfileTweets(sessionUsername);
       } else {
         tweets = await getPublicTweets();
       }
@@ -84,13 +75,13 @@ export default async (
   }
 };
 
-async function getProfileTweets(sessionProfile: Profile): Promise<TweetData[]> {
-  const followers = await prisma.follower.findMany({
-    where: { followerId: sessionProfile.id },
+async function getProfileTweets(sessionUsername: string): Promise<TweetData[]> {
+  const followers = await prisma.profile.findMany({
+    where: { followers: { some: { username: sessionUsername } } },
   });
 
   const followersId = followers.map(follower => {
-    return follower.followingId;
+    return follower.id;
   });
 
   const tweets = await prisma.tweet.findMany({
@@ -99,10 +90,14 @@ async function getProfileTweets(sessionProfile: Profile): Promise<TweetData[]> {
     take: 10,
     include: {
       profile: true,
-      comments: true,
       retweeters: true,
       saves: true,
       likes: true,
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
     },
   });
 
@@ -115,14 +110,12 @@ async function getProfileTweets(sessionProfile: Profile): Promise<TweetData[]> {
       updatedAt: tweet.updatedAt,
       createdAt: tweet.createdAt,
       content: tweet.content,
-      commentsQty: tweet.comments.length,
+      commentsQty: tweet._count.comments,
       retweetsQty: tweet.retweeters.length,
       savesQty: tweet.saves.length,
-      isLiked: tweet.likes.some(like => like.profileId === sessionProfile.id),
-      isRetweeted: tweet.retweeters.some(
-        retweetProfile => retweetProfile.id === sessionProfile.id,
-      ),
-      isSaved: tweet.saves.some(save => save.profileId === sessionProfile.id),
+      isLiked: tweet.likes.some(lp => lp.username === sessionUsername),
+      isRetweeted: tweet.retweeters.some(rp => rp.username === sessionUsername),
+      isSaved: tweet.saves.some(sp => sp.username === sessionUsername),
       retweetedBy: null,
     };
   });
@@ -135,10 +128,14 @@ async function getPublicTweets(): Promise<TweetData[]> {
     take: 10,
     include: {
       profile: true,
-      comments: true,
-      retweeters: true,
-      saves: true,
-      likes: true,
+      _count: {
+        select: {
+          comments: true,
+          retweeters: true,
+          saves: true,
+          likes: true,
+        },
+      },
     },
   });
 
@@ -151,9 +148,9 @@ async function getPublicTweets(): Promise<TweetData[]> {
       updatedAt: tweet.updatedAt,
       createdAt: tweet.createdAt,
       content: tweet.content,
-      commentsQty: tweet.comments.length,
-      retweetsQty: tweet.retweeters.length,
-      savesQty: tweet.saves.length,
+      commentsQty: tweet._count.comments,
+      retweetsQty: tweet._count.retweeters,
+      savesQty: tweet._count.saves,
       isLiked: null,
       isRetweeted: null,
       isSaved: null,

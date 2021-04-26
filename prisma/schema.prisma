@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["selectRelationCount"]
 }
 
 datasource db {
@@ -74,32 +75,22 @@ model Profile {
   createdAt                              DateTime        @default(now()) @map(name: "created_at")
   updatedAt                              DateTime        @updatedAt @map(name: "updated_at")
   deletedAt                              DateTime?        @map(name: "deleted_at")
-  followers                                Follower[]      @relation("follower")
-  following                               Follower[]     @relation("following")
+  followers                                Profile[]      @relation("follows")
+  following                               Profile[]     @relation("follows")
   retweets                                 Tweet[]        @relation("retweet")
   tweets                                   Tweet[]
   comments                              Comment[]
-  comment_likes                         CommentLike[]
-  tweetLikes                             TweetLike[]
-  tweetSaves                             TweetSave[]
+  comment_likes                         Comment[]         @relation("comment_likes")
+  tweetLikes                             Tweet[]          @relation("tweet_likes")
+  tweetSaves                             Tweet[]          @relation("tweet_saves")
 
   @@map(name: "profile")
-}
-
-model Follower {
-  followerId                            Int     @map(name: "follower_id")
-  followingId                           Int     @map(name: "following_id")
-  follower                               Profile   @relation("follower", fields: [followingId], references: [id])
-  following                              Profile   @relation("following", fields: [followerId], references: [id])
-
-  @@id([followerId, followingId])
-  @@map(name: "follower")
 }
 
 model Hashtag {
   id            Int             @id @default(autoincrement())
   content       String
-  tweet_hashtag TweetHashtag[]
+  tweets Tweet[]         @relation("hashtags")
 
   @@map(name: "hashtag")
 }
@@ -114,12 +105,12 @@ model Tweet {
   updatedAt     DateTime        @updatedAt @map(name: "updated_at")
   deletedAt     DateTime?        @map(name: "deleted_at")
   profile       Profile         @relation(fields: [profileId], references: [id])
-  retweeters       Profile[]    @relation("retweet")
-  comments Comment[]   @relation("comment")
-  hashtags TweetHashtag[]
-  images   TweetImage[]
-  likes   TweetLike[]
-  saves   TweetSave[]
+  retweeters    Profile[]    @relation("retweet")
+  comments      Comment[]   @relation("comment")
+  hashtags      Hashtag[]     @relation("hashtags")
+  images        TweetImage[]
+  likes         Profile[]     @relation("tweet_likes")
+  saves         Profile[]     @relation("tweet_saves")
 
   @@map(name: "tweet")
 }
@@ -135,19 +126,9 @@ model Comment {
   deletedAt   DateTime?        @map(name: "deleted_at")
   profile     Profile   @relation(fields: [profileId], references: [id])
   tweet       Tweet     @relation("comment", fields: [tweetId], references: [id])
-  commentLikes CommentLike[]
+  likes Profile[]      @relation("comment_likes")
 
   @@map(name: "tweet_comment")
-}
-
-model TweetHashtag {
-  tweetId   Int       @map(name: "tweet_id")
-  hashtagId Int       @map(name: "hashtag_id")
-  hashtag    Hashtag  @relation(fields: [hashtagId], references: [id])
-  tweet      Tweet    @relation(fields: [tweetId], references: [id])
-
-  @@id([tweetId, hashtagId])
-  @@map(name: "tweet_hashtag")
 }
 
 model TweetImage {
@@ -160,34 +141,4 @@ model TweetImage {
   tweet      Tweet     @relation(fields: [tweetId], references: [id])
 
   @@map(name: "tweet_image")
-}
-
-model TweetLike {
-  tweetId   Int        @map(name: "tweet_id")
-  profileId Int        @map(name: "profile_id")
-  profile    Profile   @relation(fields: [profileId], references: [id])
-  tweet      Tweet     @relation(fields: [tweetId], references: [id])
-
-  @@id([tweetId, profileId])
-  @@map(name: "tweet_like")
-}
-
-model CommentLike {
-  commentId   Int        @map(name: "comment_id")
-  profileId Int        @map(name: "profile_id")
-  profile    Profile   @relation(fields: [profileId], references: [id])
-  comment      Comment     @relation(fields: [commentId], references: [id])
-
-  @@id([commentId, profileId])
-  @@map(name: "comment_like")
-}
-
-model TweetSave {
-  tweetId   Int       @map(name: "tweet_id")
-  profileId Int       @map(name: "profile_id")
-  profile    Profile   @relation(fields: [profileId], references: [id])
-  tweet      Tweet     @relation(fields: [tweetId], references: [id])
-
-  @@id([tweetId, profileId])
-  @@map(name: "tweet_saved")
 }

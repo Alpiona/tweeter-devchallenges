@@ -54,7 +54,7 @@ const Tweet: FC<TweetProps> = ({
 
   async function handleLikeUpdate(): Promise<void> {
     axios
-      .patch(`/api/tweet/${id}/like`)
+      .patch(`/api/tweet/${id}/like?status=${!isLiked}`)
       .then(response => {
         setLikeStatus(response.data);
       })
@@ -63,7 +63,7 @@ const Tweet: FC<TweetProps> = ({
 
   async function handleRetweetUpdate(): Promise<void> {
     axios
-      .patch(`/api/tweet/${id}/retweet`)
+      .patch(`/api/tweet/${id}/retweet?status=${!isRetweeded}`)
       .then(response => {
         setRetweetStatus(response.data);
       })
@@ -72,7 +72,7 @@ const Tweet: FC<TweetProps> = ({
 
   async function handleSaveUpdate(): Promise<void> {
     axios
-      .patch(`/api/tweet/${id}/save`)
+      .patch(`/api/tweet/${id}/save?status=${!isSaved}`)
       .then(response => {
         setSaveStatus(response.data);
       })

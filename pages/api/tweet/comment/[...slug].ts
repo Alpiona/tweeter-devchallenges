@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
-import { Profile } from '.prisma/client';
 import prisma from '../../../../lib/prisma';
 
 export default async (
@@ -17,22 +16,18 @@ export default async (
   }
 
   const session = await getSession({ req });
-
-  let profileSession: Profile;
-
-  if (session) {
-    profileSession = await prisma.profile.findUnique({
-      where: { username: session.user.name.toLowerCase() },
-    });
-  }
+  const sessionUsername = session.user.name.toLowerCase();
 
   switch (req.method) {
     case 'PATCH':
       switch (type) {
         case 'like': {
+          const newStatus = req.query.status === 'true';
+
           const { status, content } = await updateLikeStatus(
             id,
-            profileSession,
+            sessionUsername,
+            newStatus,
           );
           res.status(status).json(content);
           break;
@@ -50,12 +45,13 @@ export default async (
 
 async function updateLikeStatus(
   commentId: number,
-  profileSession: Profile,
+  sessionUsername: string,
+  newStatus: boolean,
 ): Promise<{ status: number; content: unknown }> {
   const comment = await prisma.comment.findUnique({
     where: { id: commentId },
     include: {
-      commentLikes: true,
+      likes: true,
       tweet: true,
       profile: { include: { followers: true } },
     },
@@ -64,35 +60,23 @@ async function updateLikeStatus(
   if (
     !comment.tweet.isPublic &&
     !comment.profile.followers.some(
-      follower => follower.followerId === profileSession.id,
+      follower => follower.username === sessionUsername,
     )
   ) {
     return { status: 404, content: {} };
   }
 
-  const isLiked = comment.commentLikes.some(
-    like => like.profileId === profileSession.id,
-  );
-
-  if (isLiked) {
-    await prisma.commentLike.delete({
-      where: {
-        commentId_profileId: {
-          commentId: comment.id,
-          profileId: profileSession.id,
-        },
-      },
+  if (newStatus) {
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { likes: { connect: { username: sessionUsername } } },
     });
-
-    return { status: 200, content: false };
+  } else {
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { likes: { disconnect: { username: sessionUsername } } },
+    });
   }
 
-  await prisma.commentLike.create({
-    data: {
-      commentId: comment.id,
-      profileId: profileSession.id,
-    },
-  });
-
-  return { status: 200, content: true };
+  return { status: 200, content: {} };
 }

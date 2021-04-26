@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useSession } from 'next-auth/client';
 import { FC, useEffect, useState } from 'react';
 
 interface FollowButtonProps {
@@ -7,23 +8,32 @@ interface FollowButtonProps {
 
 const FollowButton: FC<FollowButtonProps> = ({ username }) => {
   const [isFollowing, setIsFollowing] = useState<boolean>(null);
+  const [session, loading] = useSession();
 
   function handleFollowUpdate(): void {
     axios
-      .patch(`/api/profile/${username}/follow`)
-      .then(response => {
-        setIsFollowing(response.data.isFollowing);
+      .patch(
+        `/api/profile/${username}/follow?action=${
+          isFollowing ? 'unfollow' : 'follow'
+        }`,
+      )
+      .then(() => {
+        setIsFollowing(!isFollowing);
       })
       .catch(err => console.log(err.toJSON()));
   }
 
   useEffect(() => {
-    axios
-      .get(`/api/profile/${username}/follow`)
-      .then(response => {
-        setIsFollowing(response.data.isFollowing);
-      })
-      .catch(err => console.log(err.toJSON()));
+    if (session?.user?.name?.toLowerCase() === username) {
+      setIsFollowing(null);
+    } else {
+      axios
+        .get(`/api/profile/${username}/isFollowing`)
+        .then(response => {
+          setIsFollowing(response.data.isFollowing);
+        })
+        .catch(err => console.log(err.toJSON()));
+    }
   }, []);
 
   if (isFollowing === null)

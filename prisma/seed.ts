@@ -1,4 +1,4 @@
-import { Follower, Profile, Tweet } from '.prisma/client';
+import { Profile, Tweet } from '.prisma/client';
 import prisma from '../lib/prisma';
 
 async function createProfile(
@@ -24,9 +24,10 @@ async function createProfile(
 async function createFollower(
   followerId: number,
   followingId: number,
-): Promise<Follower> {
-  return prisma.follower.create({
-    data: { followerId, followingId },
+): Promise<Profile> {
+  return prisma.profile.update({
+    where: { id: followerId },
+    data: { following: { connect: { id: followingId } } },
   });
 }
 

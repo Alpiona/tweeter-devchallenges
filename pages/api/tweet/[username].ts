@@ -31,12 +31,8 @@ export default async (
   const filter = parseInt(req.query.filter as string, 10);
 
   const profile = await prisma.profile.findUnique({
-    where: {
-      username,
-    },
-    include: {
-      followers: true,
-    },
+    where: { username },
+    include: { followers: true },
   });
 
   if (!profile) {
@@ -45,32 +41,26 @@ export default async (
   }
 
   const session = await getSession({ req });
-
-  let profileSession: any = { id: 0 };
-  if (session) {
-    profileSession = await prisma.profile.findUnique({
-      where: { username: session.user.name.toLowerCase() },
-    });
-  }
+  const sessionUsername = session && session.user.name.toLowerCase();
 
   let tweets: any[];
 
   switch (filter) {
     case TweetsFilterEnum.TWEETS:
     default:
-      tweets = await getTweets(profile, profileSession);
+      tweets = await getTweets(profile, sessionUsername);
       break;
 
     case TweetsFilterEnum.TWEETS_REPLIES:
-      tweets = await getTweetsAndReplies(profile, profileSession);
+      tweets = await getTweetsAndReplies(profile, sessionUsername);
       break;
 
     case TweetsFilterEnum.MEDIA:
-      tweets = await getTweetsWithMedia(profile, profileSession);
+      tweets = await getTweetsWithMedia(profile, sessionUsername);
       break;
 
     case TweetsFilterEnum.LIKES:
-      tweets = await getTweetsWithLike(profile, profileSession);
+      tweets = await getTweetsWithLike(profile, sessionUsername);
       break;
   }
 
@@ -95,14 +85,11 @@ export default async (
       retweetsQty: tweet.retweeters.length,
       savesQty: tweet.saves.length,
       isLiked:
-        profileSession &&
-        tweet.likes.some(like => like.profileId === profileSession.id),
+        session && tweet.likes.some(lp => lp.username === sessionUsername),
       isRetweeted:
-        session &&
-        tweet.retweeters.some(retweeter => retweeter.id === profileSession.id),
+        session && tweet.retweeters.some(rp => rp.username === sessionUsername),
       isSaved:
-        profileSession &&
-        tweet.saves.some(save => save.profileId === profileSession.id),
+        session && tweet.saves.some(sp => sp.username === sessionUsername),
       retweetedBy,
     };
   });
@@ -112,7 +99,7 @@ export default async (
 
 async function getTweets(
   profile: Profile,
-  profileSession: Profile,
+  sessionUsername: string,
 ): Promise<Tweet[]> {
   const tweets = await prisma.tweet.findMany({
     where: {
@@ -121,9 +108,10 @@ async function getTweets(
           OR: [
             { isPublic: true },
             {
-              profile: {
-                followers: { some: { followerId: profileSession.id } },
-              },
+              profile:
+                sessionUsername != null
+                  ? { followers: { some: { username: sessionUsername } } }
+                  : undefined,
             },
           ],
         },
@@ -150,7 +138,7 @@ async function getTweets(
 
 async function getTweetsAndReplies(
   profile: Profile,
-  profileSession: Profile,
+  sessionUsername: string,
 ): Promise<Tweet[]> {
   const tweets = await prisma.tweet.findMany({
     where: {
@@ -159,9 +147,10 @@ async function getTweetsAndReplies(
           OR: [
             { isPublic: true },
             {
-              profile: {
-                followers: { some: { followerId: profileSession.id } },
-              },
+              profile:
+                sessionUsername != null
+                  ? { followers: { some: { username: sessionUsername } } }
+                  : undefined,
             },
           ],
         },
@@ -189,7 +178,7 @@ async function getTweetsAndReplies(
 
 async function getTweetsWithMedia(
   profile: Profile,
-  profileSession: Profile,
+  sessionUsername: string,
 ): Promise<Tweet[]> {
   const tweets = await prisma.tweet.findMany({
     where: {
@@ -198,9 +187,10 @@ async function getTweetsWithMedia(
           OR: [
             { isPublic: true },
             {
-              profile: {
-                followers: { some: { followerId: profileSession.id } },
-              },
+              profile:
+                sessionUsername != null
+                  ? { followers: { some: { username: sessionUsername } } }
+                  : undefined,
             },
           ],
         },
@@ -210,9 +200,7 @@ async function getTweetsWithMedia(
             { retweeters: { some: { id: profile.id } } },
           ],
         },
-        {
-          images: { some: { content: { not: { in: [] } } } },
-        },
+        { images: { some: { content: { not: { in: [] } } } } },
       ],
     },
     orderBy: { createdAt: 'desc' },
@@ -230,7 +218,7 @@ async function getTweetsWithMedia(
 
 async function getTweetsWithLike(
   profile: Profile,
-  profileSession: Profile,
+  sessionUsername: string,
 ): Promise<Tweet[]> {
   const tweets = await prisma.tweet.findMany({
     where: {
@@ -239,15 +227,14 @@ async function getTweetsWithLike(
           OR: [
             { isPublic: true },
             {
-              profile: {
-                followers: { some: { followerId: profileSession.id } },
-              },
+              profile:
+                sessionUsername != null
+                  ? { followers: { some: { username: sessionUsername } } }
+                  : undefined,
             },
           ],
         },
-        {
-          likes: { some: { profileId: profile.id } },
-        },
+        { likes: { some: { id: profile.id } } },
       ],
     },
     orderBy: { createdAt: 'desc' },

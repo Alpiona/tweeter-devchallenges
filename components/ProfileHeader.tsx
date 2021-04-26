@@ -38,15 +38,11 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
   ): void {
     setModalIsOpen(toOpen);
     if (toOpen) {
-      const title =
-        typeUsers === 'following'
-          ? `${name} is following`
-          : `${name} followers`;
-      setModalTitle(title);
       axios
         .get(`/api/profile/${username}/${typeUsers}`)
         .then(response => {
-          setModalList(response.data);
+          setModalTitle(response.data.title);
+          setModalList(response.data.list);
         })
         .catch(err => console.log(err.toJSON()));
     }
