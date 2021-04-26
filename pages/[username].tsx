@@ -27,7 +27,8 @@ type TweetData = {
   isLiked: boolean;
   isRetweeted: boolean;
   isSaved: boolean;
-  retweetedBy: string;
+  retweetedByName: string;
+  retweetedByUsername: string;
 };
 
 interface ProfileProps {
@@ -119,7 +120,8 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 <Tweet
                   key={tweet.id}
                   id={tweet.id}
-                  retweetedBy={tweet.retweetedBy}
+                  retweetedByName={tweet.retweetedByName}
+                  retweetedByUsername={tweet.retweetedByUsername}
                   profileName={tweet.profileName}
                   profileImage={tweet.profileImage}
                   profileUsername={tweet.profileUsername}

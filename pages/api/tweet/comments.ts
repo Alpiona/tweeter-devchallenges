@@ -46,6 +46,7 @@ export default async (
       id: comment.id,
       userImage: comment.profile.profileImage,
       userName: comment.profile.name,
+      userUsername: comment.profile.username,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
       content: comment.content,
@@ -55,5 +56,6 @@ export default async (
         comment.likes.some(profile => profile.id === profileSession.id),
     };
   });
+
   res.status(200).json({ comments });
 };

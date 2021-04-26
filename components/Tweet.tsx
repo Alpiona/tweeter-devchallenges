@@ -8,6 +8,7 @@ interface CommentProps {
   id: number;
   userImage: string;
   userName: string;
+  userUsername: string;
   createdAt: string;
   updatedAt: string;
   content: string;
@@ -16,7 +17,8 @@ interface CommentProps {
 }
 interface TweetProps {
   id: number;
-  retweetedBy?: string;
+  retweetedByName?: string;
+  retweetedByUsername?: string;
   profileImage: string;
   profileName: string;
   profileUsername: string;
@@ -33,7 +35,8 @@ interface TweetProps {
 
 const Tweet: FC<TweetProps> = ({
   id,
-  retweetedBy,
+  retweetedByName,
+  retweetedByUsername,
   profileImage,
   profileName,
   profileUsername,
@@ -90,11 +93,14 @@ const Tweet: FC<TweetProps> = ({
 
   return (
     <div>
-      {retweetedBy && (
-        <div className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs">
+      {retweetedByName && (
+        <a
+          href={`/${retweetedByUsername}`}
+          className="flex pb-1 space-x-1 items-center bg-gray-100 text-gray-500 text-xs"
+        >
           <span className="material-icons text-md">loop</span>
-          <h1 className="font-noto">{`${retweetedBy} retweeted`}</h1>
-        </div>
+          <h1 className="font-noto">{`${retweetedByName} retweeted`}</h1>
+        </a>
       )}
 
       <div className="px-5 py-5 bg-white rounded-xl space-y-3">
@@ -105,7 +111,9 @@ const Tweet: FC<TweetProps> = ({
             className="h-9 w-9 object-cover rounded-lg"
           />
           <div className="space-y-1">
-            <h1 className="font-medium text-sm">{profileName}</h1>
+            <a href={`/${profileUsername}`} className="font-medium text-sm">
+              {profileName}
+            </a>
             <h1 className="font-medium text-gray-400 text-xs">{date}</h1>
           </div>
         </div>
@@ -165,6 +173,7 @@ const Tweet: FC<TweetProps> = ({
               id={comment.id}
               userImg={comment.userImage}
               userName={comment.userName}
+              userUsername={comment.userUsername}
               date={format(parseISO(comment.createdAt), "dd LLLL 'at' hh:mm")}
               content={comment.content}
               liked={comment.isLiked}

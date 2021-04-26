@@ -20,7 +20,8 @@ type TweetData = {
   isLiked: boolean;
   isRetweeted: boolean;
   isSaved: boolean;
-  retweetedBy: string;
+  retweetedByName: string;
+  retweetedByUsername: string;
 };
 
 export default async (
@@ -65,12 +66,15 @@ export default async (
   }
 
   const tweetsFormated: TweetData[] = tweets.map(tweet => {
-    let retweetedBy: string;
+    let retweetedByName: string;
+    let retweetedByUsername: string;
+
     if (
       tweet.profile.id !== profile.id &&
       tweet.retweeters.some(retweeter => retweeter.id === profile.id)
     ) {
-      retweetedBy = profile.name;
+      retweetedByName = profile.name;
+      retweetedByUsername = profile.username;
     }
 
     return {
@@ -90,7 +94,8 @@ export default async (
         session && tweet.retweeters.some(rp => rp.username === sessionUsername),
       isSaved:
         session && tweet.saves.some(sp => sp.username === sessionUsername),
-      retweetedBy,
+      retweetedByName,
+      retweetedByUsername,
     };
   });
 

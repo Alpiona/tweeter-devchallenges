@@ -6,6 +6,7 @@ interface CommentProps {
   id: number;
   userImg: string;
   userName: string;
+  userUsername: string;
   date: string;
   content: string;
   liked: boolean;
@@ -16,6 +17,7 @@ const Comment: FC<CommentProps> = ({
   id,
   userImg,
   userName,
+  userUsername,
   date,
   content,
   liked,
@@ -42,7 +44,7 @@ const Comment: FC<CommentProps> = ({
       <div className="flex-grow">
         <div className="bg-gray-100 rounded-xl p-2">
           <div className="flex space-x-3 font-medium items-baseline">
-            <h1>{userName}</h1>
+            <a href={`/${userUsername}`}>{userName}</a>
             <h1 className="text-xs text-gray-400">{date}</h1>
           </div>
           <h1 className="font-noto text-gray-700">{content}</h1>

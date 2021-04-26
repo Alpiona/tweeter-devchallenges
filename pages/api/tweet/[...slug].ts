@@ -129,6 +129,7 @@ async function getComments(
       id: comment.id,
       userImage: comment.profile.profileImage,
       userName: comment.profile.name,
+      userUsername: comment.profile.username,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
       content: comment.content,
