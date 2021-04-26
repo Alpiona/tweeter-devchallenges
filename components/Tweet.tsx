@@ -165,22 +165,29 @@ const Tweet: FC<TweetProps> = ({
             <span className="material-icons-outlined">insert_photo</span>
           </div>
         </div>
-        <hr />
-        <div className="pt-3 space-y-4">
-          {comments.map(comment => (
-            <Comment
-              key={comment.id}
-              id={comment.id}
-              userImg={comment.userImage}
-              userName={comment.userName}
-              userUsername={comment.userUsername}
-              date={format(parseISO(comment.createdAt), "dd LLLL 'at' hh:mm")}
-              content={comment.content}
-              liked={comment.isLiked}
-              likesQty={comment.likesQty}
-            />
-          ))}
-        </div>
+        {comments.length !== 0 && (
+          <>
+            <hr />
+            <div className="pt-3 space-y-4">
+              {comments.map(comment => (
+                <Comment
+                  key={comment.id}
+                  id={comment.id}
+                  userImg={comment.userImage}
+                  userName={comment.userName}
+                  userUsername={comment.userUsername}
+                  date={format(
+                    parseISO(comment.createdAt),
+                    "dd LLLL 'at' hh:mm",
+                  )}
+                  content={comment.content}
+                  liked={comment.isLiked}
+                  likesQty={comment.likesQty}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,132 +1,143 @@
 import { FC } from 'react';
-import { TweetsFilterEnum } from '../constants/TweetsFilterEnum';
+import { TweetsExploreFilterEnum } from '../constants/TweetsExploreFilterEnum';
+import { TweetsProfileFilterEnum } from '../constants/TweetsProfileFilterEnum';
 
 interface SideFilterMenuProps {
-  option: TweetsFilterEnum;
+  option: TweetsProfileFilterEnum | TweetsExploreFilterEnum;
+  filterType: 'profile' | 'explore';
   onFilterClick: (tweetsFilter: number) => void;
 }
 
 const SideFilterMenu: FC<SideFilterMenuProps> = ({
   option,
+  filterType,
   onFilterClick: handleFilterClick,
 }) => {
   switch (option) {
-    case TweetsFilterEnum.TWEETS:
+    case TweetsProfileFilterEnum.TWEETS:
+    case TweetsExploreFilterEnum.TOP:
       return (
         <div className="flex flex-col place-items-start bg-white  text-gray-400 rounded-xl py-6 space-y-3">
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8 font-semibold">
-            Tweets
+            {filterType === 'profile' ? 'Tweets' : 'Top'}
           </h1>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS_REPLIES)}
+            onClick={() =>
+              handleFilterClick(TweetsProfileFilterEnum.TWEETS_REPLIES)
+            }
           >
-            Tweets & replies
+            {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.MEDIA)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
           >
-            Media
+            {filterType === 'profile' ? 'Media' : 'People'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.LIKES)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.LIKES)}
           >
-            Likes
+            {filterType === 'profile' ? 'Likes' : 'Media'}
           </button>
         </div>
       );
 
-    case TweetsFilterEnum.TWEETS_REPLIES:
+    case TweetsProfileFilterEnum.TWEETS_REPLIES:
+    case TweetsExploreFilterEnum.LASTEST:
       return (
         <div className="flex flex-col place-items-start bg-white font-semibold text-gray-400 rounded-xl py-6 space-y-3">
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.TWEETS)}
           >
-            Tweets
+            {filterType === 'profile' ? 'Tweets' : 'Top'}
           </button>
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
-            Tweets & replies
+            {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </h1>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.MEDIA)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
           >
-            Media
+            {filterType === 'profile' ? 'Media' : 'People'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.LIKES)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.LIKES)}
           >
-            Likes
+            {filterType === 'profile' ? 'Likes' : 'Media'}
           </button>
         </div>
       );
 
-    case TweetsFilterEnum.MEDIA:
+    case TweetsProfileFilterEnum.MEDIA:
+    case TweetsExploreFilterEnum.PEOPLE:
       return (
         <div className="flex flex-col place-items-start bg-white font-semibold text-gray-400 rounded-xl py-6 space-y-3">
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.TWEETS)}
           >
-            Tweets
+            {filterType === 'profile' ? 'Tweets' : 'Top'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS_REPLIES)}
+            onClick={() =>
+              handleFilterClick(TweetsProfileFilterEnum.TWEETS_REPLIES)}
           >
-            Tweets & replies
+            {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
-            Media
+            {filterType === 'profile' ? 'Media' : 'People'}
           </h1>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.LIKES)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.LIKES)}
           >
-            Likes
+            {filterType === 'profile' ? 'Likes' : 'Media'}
           </button>
         </div>
       );
 
-    case TweetsFilterEnum.LIKES:
+    case TweetsProfileFilterEnum.LIKES:
+    case TweetsExploreFilterEnum.MEDIA:
       return (
         <div className="flex flex-col place-items-start bg-white font-semibold text-gray-400 rounded-xl py-6 space-y-3">
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.TWEETS)}
           >
-            Tweets
+            {filterType === 'profile' ? 'Tweets' : 'Top'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.TWEETS_REPLIES)}
+            onClick={() =>
+              handleFilterClick(TweetsProfileFilterEnum.TWEETS_REPLIES)}
           >
-            Tweets & replies
+            {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsFilterEnum.MEDIA)}
+            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
           >
-            Media
+            {filterType === 'profile' ? 'Media' : 'People'}
           </button>
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
-            Likes
+            {filterType === 'profile' ? 'Likes' : 'Media'}
           </h1>
         </div>
       );

@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 import Tweet from '../components/Tweet';
 import SideFilterMenu from '../components/SideFilterMenu';
 import ProfileHeader from '../components/ProfileHeader';
-import { TweetsFilterEnum } from '../constants/TweetsFilterEnum';
+import { TweetsProfileFilterEnum } from '../constants/TweetsProfileFilterEnum';
 
 type TweetData = {
   id: number;
@@ -75,15 +75,16 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   username,
 }: ProfileProps) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
-  const [tweetsFilter, setTweetsFilter] = useState<TweetsFilterEnum>(
-    TweetsFilterEnum.TWEETS,
+  const [tweetsFilter, setTweetsFilter] = useState<TweetsProfileFilterEnum>(
+    TweetsProfileFilterEnum.TWEETS,
   );
 
-  function handleTweetsFilter(filter: TweetsFilterEnum): void {
+  function handleTweetsFilter(filter: TweetsProfileFilterEnum): void {
     setTweetsFilter(filter);
   }
 
   useEffect(() => {
+    setTweets([]);
     axios
       .get(`/api/tweet/${username}`, { params: { filter: tweetsFilter } })
       .then(response => {
@@ -98,45 +99,44 @@ const ProfilePage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         className="w-full h-72 bg-center absolute z-0"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
       />
-      <div className="bg-gray-100 h-auto">
-        <div className="w-2/3 mx-auto space-y-6">
-          <ProfileHeader
-            image={profileImage}
-            name={name}
-            username={username}
-            followingQty={followingQty}
-            followersQty={followerQty}
-            description={description}
-          />
-          <div className="flex space-x-6">
-            <div className="w-1/5">
-              <SideFilterMenu
-                option={tweetsFilter}
-                onFilterClick={handleTweetsFilter}
+      <div className="w-2/3 mx-auto space-y-6">
+        <ProfileHeader
+          image={profileImage}
+          name={name}
+          username={username}
+          followingQty={followingQty}
+          followersQty={followerQty}
+          description={description}
+        />
+        <div className="flex space-x-6">
+          <div className="w-1/5">
+            <SideFilterMenu
+              option={tweetsFilter}
+              filterType="profile"
+              onFilterClick={handleTweetsFilter}
+            />
+          </div>
+          <div className="w-4/5 space-y-6">
+            {tweets.map(tweet => (
+              <Tweet
+                key={tweet.id}
+                id={tweet.id}
+                retweetedByName={tweet.retweetedByName}
+                retweetedByUsername={tweet.retweetedByUsername}
+                profileName={tweet.profileName}
+                profileImage={tweet.profileImage}
+                profileUsername={tweet.profileUsername}
+                date={format(parseISO(tweet.createdAt), "dd LLLL 'at' hh:mm")}
+                content={tweet.content}
+                img=""
+                commentsQty={tweet.commentsQty}
+                retweetsQty={tweet.retweetsQty}
+                savedQty={tweet.savesQty}
+                liked={tweet.isLiked}
+                retweeted={tweet.isRetweeted}
+                saved={tweet.isSaved}
               />
-            </div>
-            <div className="w-4/5 space-y-6">
-              {tweets.map(tweet => (
-                <Tweet
-                  key={tweet.id}
-                  id={tweet.id}
-                  retweetedByName={tweet.retweetedByName}
-                  retweetedByUsername={tweet.retweetedByUsername}
-                  profileName={tweet.profileName}
-                  profileImage={tweet.profileImage}
-                  profileUsername={tweet.profileUsername}
-                  date={format(parseISO(tweet.createdAt), "dd LLLL 'at' hh:mm")}
-                  content={tweet.content}
-                  img=""
-                  commentsQty={tweet.commentsQty}
-                  retweetsQty={tweet.retweetsQty}
-                  savedQty={tweet.savesQty}
-                  liked={tweet.isLiked}
-                  retweeted={tweet.isRetweeted}
-                  saved={tweet.isSaved}
-                />
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>

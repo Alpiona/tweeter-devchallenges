@@ -20,7 +20,8 @@ const Bookmarks: NextPage = () => {
           <Tweet
             key={1}
             id={1}
-            retweetedBy="Daniel Something"
+            retweetedByName="Daniel Something"
+            retweetedByUsername="daniel.something"
             profileImage="/profile2.jpg"
             profileName="Peter Jackson"
             profileUsername="peter.jackson"
@@ -37,7 +38,8 @@ const Bookmarks: NextPage = () => {
           <Tweet
             key={2}
             id={2}
-            retweetedBy=""
+            retweetedByName={null}
+            retweetedByUsername={null}
             profileImage="/profile6.jpg"
             profileName="Waqar Bloom"
             profileUsername="wagar.bloom"

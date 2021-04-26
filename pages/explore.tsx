@@ -1,20 +1,59 @@
+import axios from 'axios';
+import { parseISO, format } from 'date-fns';
 import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
+import SideFilterMenu from '../components/SideFilterMenu';
 import Tweet from '../components/Tweet';
+import { TweetsExploreFilterEnum } from '../constants/TweetsExploreFilterEnum';
+
+type TweetData = {
+  id: number;
+  profileName: string;
+  profileUsername: string;
+  profileImage: string;
+  updatedAt: string;
+  createdAt: string;
+  content: string;
+  commentsQty: number;
+  retweetsQty: number;
+  savesQty: number;
+  isLiked: boolean;
+  isRetweeted: boolean;
+  isSaved: boolean;
+  retweetedByName: string;
+  retweetedByUsername: string;
+};
 
 const Explore: NextPage = () => {
+  const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [tweetsFilter, setTweetsFilter] = useState<TweetsExploreFilterEnum>(
+    TweetsExploreFilterEnum.TOP,
+  );
+
+  function handleTweetsFilter(filter: TweetsExploreFilterEnum): void {
+    setTweetsFilter(filter);
+  }
+
+  useEffect(() => {
+    setTweets([]);
+    axios
+      .get(`/api/tweet`, { params: { filter: tweetsFilter } })
+      .then(response => {
+        setTweets(response.data.tweets);
+      })
+      .catch(err => console.log(err.toJSON()));
+  }, [tweetsFilter]);
+
   return (
     <Layout>
       <div className="flex items-start justify-center space-x-6 px-24 py-6 bg-gray-100 ">
         <div className="w-1/5">
-          <div className="bg-white font-semibold text-gray-400 rounded-xl py-6 space-y-3">
-            <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
-              Top
-            </h1>
-            <h1 className="h-8 pl-5 leading-8">Lastest</h1>
-            <h1 className="h-8 pl-5 leading-8">People</h1>
-            <h1 className="h-8 pl-5 leading-8">Media</h1>
-          </div>
+          <SideFilterMenu
+            option={tweetsFilter}
+            filterType="explore"
+            onFilterClick={handleTweetsFilter}
+          />
         </div>
         <div className="w-1/2 space-y-6">
           <div className="flex justify-between bg-white rounded-xl p-3 px-4">
@@ -29,38 +68,26 @@ const Explore: NextPage = () => {
               Search
             </button>
           </div>
-          <Tweet
-            id={1}
-            retweetedBy=""
-            profileImage="/profile6.jpg"
-            profileName="Waqar Bloom"
-            profileUsername="wagar.bloom"
-            date="15 August at 23:33"
-            content="“The gladdest moment in human life, methinks, is a departure into unknown lands.” – Sir Richard Burton"
-            img="/background4.jpg"
-            commentsQty={449}
-            retweetsQty={59}
-            savedQty={234}
-            liked={false}
-            retweeted={false}
-            saved={false}
-          />
-          <Tweet
-            id={2}
-            retweetedBy="Daniel Something"
-            profileImage="/profile2.jpg"
-            profileName="Peter Jackson"
-            profileUsername="peter.jackson"
-            date="23 August at 08:11"
-            content='"We travel, some of us forever, to seek other places, other lives, other souls." - Anais Nin'
-            img="/background.jpeg"
-            commentsQty={449}
-            retweetsQty={59}
-            savedQty={234}
-            liked
-            retweeted
-            saved
-          />
+          {tweets.map(tweet => (
+            <Tweet
+              key={tweet.id}
+              id={tweet.id}
+              retweetedByName={tweet.retweetedByName}
+              retweetedByUsername={tweet.retweetedByUsername}
+              profileName={tweet.profileName}
+              profileImage={tweet.profileImage}
+              profileUsername={tweet.profileUsername}
+              date={format(parseISO(tweet.createdAt), "dd LLLL 'at' hh:mm")}
+              content={tweet.content}
+              img=""
+              commentsQty={tweet.commentsQty}
+              retweetsQty={tweet.retweetsQty}
+              savedQty={tweet.savesQty}
+              liked={tweet.isLiked}
+              retweeted={tweet.isRetweeted}
+              saved={tweet.isSaved}
+            />
+          ))}
         </div>
       </div>
     </Layout>

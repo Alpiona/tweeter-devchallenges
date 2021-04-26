@@ -3,8 +3,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
 import { Profile, Tweet } from '.prisma/client';
-import { TweetsFilterEnum } from '../../../constants/TweetsFilterEnum';
 import prisma from '../../../lib/prisma';
+import { TweetsProfileFilterEnum } from '../../../constants/TweetsProfileFilterEnum';
 
 type TweetData = {
   id: number;
@@ -47,20 +47,20 @@ export default async (
   let tweets: any[];
 
   switch (filter) {
-    case TweetsFilterEnum.TWEETS:
+    case TweetsProfileFilterEnum.TWEETS:
     default:
       tweets = await getTweets(profile, sessionUsername);
       break;
 
-    case TweetsFilterEnum.TWEETS_REPLIES:
+    case TweetsProfileFilterEnum.TWEETS_REPLIES:
       tweets = await getTweetsAndReplies(profile, sessionUsername);
       break;
 
-    case TweetsFilterEnum.MEDIA:
+    case TweetsProfileFilterEnum.MEDIA:
       tweets = await getTweetsWithMedia(profile, sessionUsername);
       break;
 
-    case TweetsFilterEnum.LIKES:
+    case TweetsProfileFilterEnum.LIKES:
       tweets = await getTweetsWithLike(profile, sessionUsername);
       break;
   }
