@@ -38,7 +38,7 @@ const Explore: NextPage = () => {
   useEffect(() => {
     setTweets([]);
     axios
-      .get(`/api/tweet`, { params: { filter: tweetsFilter } })
+      .get(`/api/tweet/explore`, { params: { filter: tweetsFilter } })
       .then(response => {
         setTweets(response.data.tweets);
       })

@@ -30,13 +30,15 @@ const SideFilterMenu: FC<SideFilterMenuProps> = ({
           >
             {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
-          <button
-            type="button"
-            className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
-          >
-            {filterType === 'profile' ? 'Media' : 'People'}
-          </button>
+          {filterType === 'profile' && (
+            <button
+              type="button"
+              className="h-8 pl-5 leading-8 font-semibold"
+              onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
+            >
+              Media
+            </button>
+          )}
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
@@ -61,13 +63,15 @@ const SideFilterMenu: FC<SideFilterMenuProps> = ({
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
             {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </h1>
-          <button
-            type="button"
-            className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
-          >
-            {filterType === 'profile' ? 'Media' : 'People'}
-          </button>
+          {filterType === 'profile' && (
+            <button
+              type="button"
+              className="h-8 pl-5 leading-8 font-semibold"
+              onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
+            >
+              Media
+            </button>
+          )}
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
@@ -97,9 +101,11 @@ const SideFilterMenu: FC<SideFilterMenuProps> = ({
           >
             {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
-          <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
-            {filterType === 'profile' ? 'Media' : 'People'}
-          </h1>
+          {filterType === 'profile' && (
+            <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
+              Media
+            </h1>
+          )}
           <button
             type="button"
             className="h-8 pl-5 leading-8 font-semibold"
@@ -129,13 +135,15 @@ const SideFilterMenu: FC<SideFilterMenuProps> = ({
           >
             {filterType === 'profile' ? 'Tweets & replies' : 'Lastest'}
           </button>
-          <button
-            type="button"
-            className="h-8 pl-5 leading-8 font-semibold"
-            onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
-          >
-            {filterType === 'profile' ? 'Media' : 'People'}
-          </button>
+          {filterType === 'profile' && (
+            <button
+              type="button"
+              className="h-8 pl-5 leading-8 font-semibold"
+              onClick={() => handleFilterClick(TweetsProfileFilterEnum.MEDIA)}
+            >
+              Media
+            </button>
+          )}
           <h1 className="h-8 pl-4 border-l-3 border-current text-blue-500 leading-8">
             {filterType === 'profile' ? 'Likes' : 'Media'}
           </h1>
