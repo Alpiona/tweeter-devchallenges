@@ -1,20 +1,36 @@
 import Link from 'next/link';
 import { NextComponentType } from 'next';
 import { signIn, useSession } from 'next-auth/client';
+import { ActiveLink } from './ActiveLink';
 
 const Header: NextComponentType = () => {
   const [session, loading] = useSession();
 
   return (
-    <nav className="flex items-center justify-between h-20 pl-16">
+    <div className="flex items-center justify-between h-20 pl-16 bg-white">
       <Link href="/">
         <img src="/tweeter.svg" alt="" className="object-left h-7" />
       </Link>
-      <div className="flex items-center justify-around w-96 font-semibold text-base text-gray-500">
-        <Link href="/">Home</Link>
-        <Link href="/explore">Explore</Link>
-        <Link href="/bookmarks">Bookmarks</Link>
-      </div>
+      <nav className="flex items-center justify-around w-96 font-semibold text-base text-gray-500">
+        <ActiveLink
+          activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
+          href="/"
+        >
+          <h1>Home</h1>
+        </ActiveLink>
+        <ActiveLink
+          activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
+          href="/explore"
+        >
+          <h1>Explore</h1>
+        </ActiveLink>
+        <ActiveLink
+          activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
+          href="/bookmarks"
+        >
+          <h1>Bookmarks</h1>
+        </ActiveLink>
+      </nav>
       {!session && (
         <button
           type="button"
@@ -38,7 +54,7 @@ const Header: NextComponentType = () => {
           </div>
         </Link>
       )}
-    </nav>
+    </div>
   );
 };
 
