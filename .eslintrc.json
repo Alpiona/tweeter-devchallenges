@@ -26,6 +26,7 @@
     "prettier"
   ],
   "rules": {
+    "jsx-a11y/anchor-is-valid" : "off",
     "no-underscore-dangle": "warn",
     "no-case-declarations": "off",
     "no-use-before-define": "off",

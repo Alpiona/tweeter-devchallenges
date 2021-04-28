@@ -89,7 +89,7 @@ model Profile {
 
 model Hashtag {
   id            Int             @id @default(autoincrement())
-  content       String
+  content       String           @unique
   tweets Tweet[]         @relation("hashtags")
 
   @@map(name: "hashtag")

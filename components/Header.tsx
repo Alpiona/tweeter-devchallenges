@@ -8,27 +8,27 @@ const Header: NextComponentType = () => {
 
   return (
     <div className="flex items-center justify-between h-20 pl-16 bg-white">
-      <Link href="/">
+      <a href="/">
         <img src="/tweeter.svg" alt="" className="object-left h-7" />
-      </Link>
+      </a>
       <nav className="flex items-center justify-around w-96 font-semibold text-base text-gray-500">
         <ActiveLink
           activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
           href="/"
         >
-          <h1>Home</h1>
+          <a>Home</a>
         </ActiveLink>
         <ActiveLink
           activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
           href="/explore"
         >
-          <h1>Explore</h1>
+          <a>Explore</a>
         </ActiveLink>
         <ActiveLink
           activeClassName="py-5 px-3 mt-1 border-b-3 border-current text-blue-500 leading-8"
           href="/bookmarks"
         >
-          <h1>Bookmarks</h1>
+          <a>Bookmarks</a>
         </ActiveLink>
       </nav>
       {!session && (

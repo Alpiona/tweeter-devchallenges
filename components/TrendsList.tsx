@@ -1,41 +1,33 @@
-import { FC } from 'react';
+import axios from 'axios';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { FC, useEffect, useState } from 'react';
 
 const TrendsList: FC = () => {
+  const [hashtags, setHashtags] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hashtag/trending`)
+      .then(response => {
+        setHashtags(response.data.hashtags);
+      })
+      .catch(err => {
+        console.log(err.toJSON());
+      });
+  });
+
   return (
     <div className="px-5 py-4 bg-white rounded-lg">
       <h1 className="font-semibold text-xs">Trends for you</h1>
       <hr className="pb-2 mt-2" />
 
       <div className="space-y-7">
-        <div className="space-y-3">
-          <h1 className="font-semibold text-ml pt-4">#programming</h1>
-          <h1 className="font-medium text-xs text-gray-500">213k Tweets</h1>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="font-semibold text-ml">#devchallenges</h1>
-          <h1 className="font-medium text-xs text-gray-500">123k Tweets</h1>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="font-semibold text-ml">#frontend</h1>
-          <h1 className="font-medium text-xs text-gray-500">34k Tweets</h1>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="font-semibold text-ml">#helsinki</h1>
-          <h1 className="font-medium text-xs text-gray-500">11k Tweets</h1>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="font-semibold text-ml">#1000DaysOfCode</h1>
-          <h1 className="font-medium text-xs text-gray-500">5k Tweets</h1>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="font-semibold text-ml">#learntocode</h1>
-          <h1 className="font-medium text-xs text-gray-500">1k Tweets</h1>
-        </div>
+        {hashtags.map(hashtag => (
+          <div className="space-y-2">
+            <h1 className="font-semibold text-ml">{hashtag.content}</h1>
+            <h1 className="font-medium text-xs text-gray-500">{`${hashtag.quantity} Tweets`}</h1>
+          </div>
+        ))}
       </div>
     </div>
   );

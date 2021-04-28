@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/client';
 import _ from 'lodash';
 import prisma from '../../../lib/prisma';
+import { Tweet } from '.prisma/client';
 
 type TweetData = {
   id: number;
@@ -32,11 +33,23 @@ export default async (
     case 'POST':
       const { isPublic, content } = req.body;
 
+      const hashtags = String(content)
+        .split(' ')
+        .filter(word => word[0] === '#' && word.length > 0);
+
       const newTweet = await prisma.tweet.create({
         data: {
           content,
           isPublic,
           profile: { connect: { username: sessionUsername } },
+          hashtags: {
+            connectOrCreate: hashtags.map(hashtag => {
+              return {
+                where: { content: hashtag.toLowerCase() },
+                create: { content: hashtag.toLowerCase() },
+              };
+            }),
+          },
         },
         include: {
           profile: true,

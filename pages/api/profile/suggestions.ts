@@ -30,14 +30,14 @@ export default async (
       },
     },
     include: { followers: true },
-    take: 20,
+    take: 10,
   });
 
   const profilesSorted = suggestionProfiles
     .sort(() => {
       return 0.5 - Math.random();
     })
-    .splice(0, 5);
+    .splice(0, 3);
 
   const formatedProfiles: FollowSuggestionData[] = profilesSorted.map(
     profile => {
