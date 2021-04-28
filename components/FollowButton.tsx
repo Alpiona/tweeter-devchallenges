@@ -4,9 +4,10 @@ import { FC, useEffect, useState } from 'react';
 
 interface FollowButtonProps {
   username: string;
+  scale?: string;
 }
 
-const FollowButton: FC<FollowButtonProps> = ({ username }) => {
+const FollowButton: FC<FollowButtonProps> = ({ username, scale = '90' }) => {
   const [isFollowing, setIsFollowing] = useState<boolean>(null);
   const [session, loading] = useSession();
 
@@ -39,7 +40,7 @@ const FollowButton: FC<FollowButtonProps> = ({ username }) => {
   if (isFollowing === null)
     return (
       <button
-        className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-gray-200 text-gray-400 rounded-md text-sm font-medium"
+        className={`flex items-center py-2 px-4 space-x-1 transform scale-${scale} bg-gray-200 text-gray-400 rounded-md text-sm font-medium`}
         type="button"
         onClick={handleFollowUpdate}
         disabled
@@ -52,7 +53,7 @@ const FollowButton: FC<FollowButtonProps> = ({ username }) => {
   if (isFollowing)
     return (
       <button
-        className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-gray-300 text-gray-600 rounded-md text-sm font-medium"
+        className={`flex items-center py-2 px-4 space-x-1 transform scale-${scale} bg-gray-300 text-gray-600 rounded-md text-sm font-medium`}
         type="button"
         onClick={handleFollowUpdate}
       >
@@ -63,7 +64,7 @@ const FollowButton: FC<FollowButtonProps> = ({ username }) => {
 
   return (
     <button
-      className="flex items-center py-2 px-4 space-x-1 transform scale-90 bg-blue-500 text-white rounded-md text-sm font-medium"
+      className={`flex items-center py-2 px-4 space-x-1 transform scale-${scale} bg-blue-500 text-white rounded-md text-sm font-medium`}
       type="button"
       onClick={handleFollowUpdate}
     >

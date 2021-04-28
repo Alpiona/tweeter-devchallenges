@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
 import { getSession, useSession } from 'next-auth/client';
 import { useEffect, useState } from 'react';
-import FollowSugestion from '../components/FollowSugestion';
+import FollowSuggestion from '../components/FollowSuggestion';
 import Layout from '../components/Layout';
 import TrendsList from '../components/TrendsList';
 import Tweet from '../components/Tweet';
@@ -19,6 +19,15 @@ type PropsData = {
     followingQty: number;
     followerQty: number;
   };
+};
+
+type FollowSuggestionData = {
+  profileImage: string;
+  profileName: string;
+  profileUsername: string;
+  followersQty: number;
+  description: string;
+  image: string;
 };
 
 type TweetData = {
@@ -59,6 +68,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Home: NextPage<PropsData> = ({ profile }: PropsData) => {
   const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [followSuggestions, setFollowSuggestions] = useState<
+    FollowSuggestionData[]
+  >([]);
   const [session] = useSession();
 
   useEffect(() => {
@@ -68,7 +80,16 @@ const Home: NextPage<PropsData> = ({ profile }: PropsData) => {
         setTweets(response.data.tweets);
       })
       .catch(err => console.log(err));
-  }, [session]);
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`/api/profile/suggestions`)
+      .then(response => {
+        setFollowSuggestions(response.data.profiles);
+      })
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <Layout>
@@ -98,28 +119,19 @@ const Home: NextPage<PropsData> = ({ profile }: PropsData) => {
         </div>
         <div className="w-1/5 space-y-6">
           <TrendsList />
-          <div className="px-5 py-4 bg-white rounded-xl space-y-2">
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <h1 className="font-semibold text-xs">Who to follow</h1>
-                <hr />
-              </div>
-              <FollowSugestion
-                userImg="/profile5.jpg"
-                userName="Mikael Stanley"
-                followersQty="230k followers"
-                description="Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰"
-                image="/background2.jpg"
+          <div className="px-5 py-4 bg-white rounded-xl divide-y">
+            <h1 className="pb-3 font-semibold text-xs">Who to follow</h1>
+            {followSuggestions.map(followSuggestion => (
+              <FollowSuggestion
+                key={followSuggestion.profileUsername}
+                profileImage={followSuggestion.profileImage}
+                profileName={followSuggestion.profileName}
+                profileUsername={followSuggestion.profileUsername}
+                followersQty={followSuggestion.followersQty}
+                description={followSuggestion.description}
+                image={followSuggestion.image}
               />
-              <hr />
-              <FollowSugestion
-                userImg="/profile4.jpg"
-                userName="Susanna Harvey"
-                followersQty="55k followers"
-                description="Follow me on IG: @susharv"
-                image="/background3.jpg"
-              />
-            </div>
+            ))}
           </div>
         </div>
       </div>
