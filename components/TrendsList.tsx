@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { FC, useEffect, useState } from 'react';
 
 const TrendsList: FC = () => {
@@ -11,10 +10,8 @@ const TrendsList: FC = () => {
       .then(response => {
         setHashtags(response.data.hashtags);
       })
-      .catch(err => {
-        console.log(err.toJSON());
-      });
-  });
+      .catch(err => console.log(err.toJSON()));
+  }, []);
 
   return (
     <div className="px-5 py-4 bg-white rounded-lg">
@@ -23,7 +20,7 @@ const TrendsList: FC = () => {
 
       <div className="space-y-7">
         {hashtags.map(hashtag => (
-          <div className="space-y-2">
+          <div className="space-y-2" key={hashtag.content}>
             <h1 className="font-semibold text-ml">{hashtag.content}</h1>
             <h1 className="font-medium text-xs text-gray-500">{`${hashtag.quantity} Tweets`}</h1>
           </div>

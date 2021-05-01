@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
-import { FC, useState } from 'react';
+import { useSession } from 'next-auth/client';
+import { FC, FormEvent, useState } from 'react';
 import Comment from './Comment';
 import ReactionButton from './ReactionButton';
 
@@ -54,6 +55,7 @@ const Tweet: FC<TweetProps> = ({
   const [isLiked, setLikeStatus] = useState<boolean>(liked);
   const [isRetweeded, setRetweetStatus] = useState<boolean>(retweeted);
   const [isSaved, setSaveStatus] = useState<boolean>(saved);
+  const [session, loading] = useSession();
 
   async function handleLikeUpdate(): Promise<void> {
     axios
@@ -76,20 +78,28 @@ const Tweet: FC<TweetProps> = ({
   async function handleSaveUpdate(): Promise<void> {
     axios
       .patch(`/api/tweet/${id}/save?status=${!isSaved}`)
-      .then(response => {
-        setSaveStatus(response.data);
-      })
+      .then(response => setSaveStatus(response.data))
       .catch(err => console.log(err));
   }
 
   async function handleCommentsList(): Promise<void> {
     axios
       .get(`/api/tweet/${id}/comments`)
-      .then(response => {
-        setComments(response.data.comments);
-      })
+      .then(response => setComments(response.data.comments))
       .catch(err => console.log(err));
   }
+
+  const handleCommentSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    axios
+      .post(
+        `/api/tweet/comment`,
+        { tweetId: id, content: event.target[0].value },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+      .then(response => setComments([...comments, response.data.comment]))
+      .catch(err => console.log(err.toJSON()));
+  };
 
   return (
     <div>
@@ -156,14 +166,32 @@ const Tweet: FC<TweetProps> = ({
         <hr />
         <div className="flex items-center space-x-2 h-9">
           <img
-            src="/profile.jpg"
+            src={session.user.image}
             alt=""
             className="h-9 w-9 object-cover rounded-lg"
           />
-          <div className="flex flex-grow items-center justify-between p-2 h-9 w-full border rounded-lg bg-gray-100 text-gray-400 ">
-            <div className="text-sm">Tweet your reply</div>
+          <form
+            onSubmit={handleCommentSubmit}
+            className="flex flex-grow items-center justify-between p-2 h-9 w-full border rounded-lg bg-gray-100 text-gray-400 "
+          >
+            {/* <div className="text-sm">Tweet your reply</div> */}
+            {/* <textarea
+              name="content"
+              rows={2}
+              placeholder="Whats happening?"
+              className="w-full h-full text-gray-600 text-sm bg-gray-100 resize-none"
+              required
+            /> */}
+            <input
+              type="text"
+              placeholder="Whats happening?"
+              className="w-full h-full text-gray-600 text-sm bg-gray-100 resize-none"
+            />
+            <button type="submit" className="" hidden>
+              Submit
+            </button>
             <span className="material-icons-outlined">insert_photo</span>
-          </div>
+          </form>
         </div>
         {comments.length !== 0 && (
           <>

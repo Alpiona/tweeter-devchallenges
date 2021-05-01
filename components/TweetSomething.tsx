@@ -42,6 +42,7 @@ const TweetSomething: FC<TweetSomethingProps> = ({ userImg }) => {
           <div className="flex justify-between">
             <div className="flex space-x-2 text-blue-500">
               <button type="button" className="flex items-center">
+                {/* <input type="file" name="file" onClick={} hidden /> */}
                 <span className="material-icons-outlined">insert_photo</span>
               </button>
 
